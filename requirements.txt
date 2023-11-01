@@ -1,0 +1,3 @@
+-r stub/requirements.txt
+DBUtils
+PyMySQL
