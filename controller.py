@@ -5,7 +5,7 @@ from dbutils.pooled_db import PooledDB
 from config import OPENAPI_STUB_DIR, DB_HOST, DB_USER, DB_PASSWD, DB_NAME
 
 sys.path.append(OPENAPI_STUB_DIR)
-from openapi_server import models
+from swagger_server import models
 
 pool = PooledDB(creator=pymysql,
                 host=DB_HOST,
