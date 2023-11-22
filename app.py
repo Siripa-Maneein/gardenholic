@@ -28,8 +28,8 @@ from swagger_server import encoder
 def main():
     app = connexion.App(__name__, specification_dir='./openapi/')
     app.app.json_encoder = encoder.JSONEncoder
-    app.add_api('rain-api.yaml',
-                arguments={'title': 'Chaopraya Rainfalls API'},
+    app.add_api('gardenholic-api.yaml',
+                arguments={'title': 'GardenHolic API'},
                 pythonic_params=True)
 
     app.run(port=8080, debug=True)

@@ -15,39 +15,39 @@ pool = PooledDB(creator=pymysql,
                 maxconnections=1,
                 blocking=True)
 
-def get_basins():
+def get_kidbright_sensors_data():
     with pool.connection() as conn, conn.cursor() as cs:
-        cs.execute("SELECT basin_id,ename FROM basin")
-        result = [models.BasinShort(basin_id, name) for basin_id, name in cs.fetchall()]
+        cs.execute("SELECT ts, lat, lon, soil, humid, temp, light FROM gardener")
+        result = [models.Sensor(value[0], value[1], value[2], value[3], value[4], value[5]) for value in cs.fetchall()]
     return result
 
-def get_basin_details(basin_id):
-    with pool.connection() as conn, conn.cursor() as cs:
-        cs.execute("""
-            SELECT basin_id, ename, area
-            FROM basin
-            WHERE basin_id=%s
-            """, [basin_id])
-        result = cs.fetchone()
-    if result:
-        basin_id, name, area = result
-        return models.BasinFull(basin_id, name, area)
-    else:
-        abort(404)
+# def get_basin_details(basin_id):
+#     with pool.connection() as conn, conn.cursor() as cs:
+#         cs.execute("""
+#             SELECT basin_id, ename, area
+#             FROM basin
+#             WHERE basin_id=%s
+#             """, [basin_id])
+#         result = cs.fetchone()
+#     if result:
+#         basin_id, name, area = result
+#         return models.BasinFull(basin_id, name, area)
+#     else:
+#         abort(404)
 
 
-def get_stations(basin_id):
-    with pool.connection() as conn, conn.cursor() as cs:
-        cs.execute("""
-            SELECT station_id, s.ename
-            FROM station s
-            INNER JOIN basin b ON s.basin_id=b.basin_id
-            WHERE b.basin_id=%s
-            """, [basin_id])
-        result = [models.StationShort(station_id, name) for station_id, name in cs.fetchall()]
-    return result
+# def get_stations(basin_id):
+#     with pool.connection() as conn, conn.cursor() as cs:
+#         cs.execute("""
+#             SELECT station_id, s.ename
+#             FROM station s
+#             INNER JOIN basin b ON s.basin_id=b.basin_id
+#             WHERE b.basin_id=%s
+#             """, [basin_id])
+#         result = [models.StationShort(station_id, name) for station_id, name in cs.fetchall()]
+#     return result
 
 
-def get_station_details(station_id):
-    return "Do something"
+# def get_station_details(station_id):
+#     return "Do something"
 
