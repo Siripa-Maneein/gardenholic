@@ -1,13 +1,13 @@
 openapi: 3.0.0
 info:
   title: GardenHolic API
-  description:
-    This API provides sensor data from kidbright board at Ploy's house. 
-    Also, it provides and analyses weather data information from 
+  description: |
+    This API provides sensor data from the KidBright board at Ploy's house. 
+    Also, it provides and analyzes weather data information from 
     Thai Meteorological Department (TMD) API.
   version: 1.0.0
 servers:
-- url: /gardenholic-api/v1
+  - url: http://127.0.0.1:8080/gardenholic-api/v2
 paths:
   /sensors:
     get:
@@ -22,60 +22,30 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Sensor'
-  # /basins/{basinId}:
-  #   parameters:
-  #   - name: basinId
-  #     in: path
-  #     required: true
-  #     schema:
-  #       type : integer
-  #   get:
-  #     summary: Returns complete details of the specified basin
-  #     operationId: controller.get_basin_details
-  #     responses:
-  #       200:
-  #         description: Success
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/BasinFull'
-  # /basins/{basinId}/stations:
-  #   parameters:
-  #   - name: basinId
-  #     in: path
-  #     required: true
-  #     schema:
-  #       type : integer
-  #   get:
-  #     summary: Returns a list of stations located within the specified basin.
-  #     operationId: controller.get_stations
-  #     responses:
-  #       200:
-  #         description: Success
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 $ref: '#/components/schemas/StationShort'
-  # /stations/{stationId}:
-  #   parameters:
-  #   - name: stationId
-  #     in: path
-  #     required: true
-  #     schema:
-  #       type : integer
-  #   get:
-  #     summary: Returns complete details of the specified station
-  #     operationId: controller.get_station_details
-  #     responses:
-  #       200:
-  #         description: Success
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/StationFull'
-
+  /tmb_accuracy/sensors:
+    get:
+      summary: Compare forecast and sensors data for the past 3 days and calculate accuracy.
+      operationId: controller.calculate_mape_sensors
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accuracy'
+  /tmb_accuracy:
+    get:
+      summary: Compare forecast and actual data for the past 3 days and calculate accuracy.
+      operationId: controller.calculate_forecast_actual
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accuracy'
+  
+                
 components:
   schemas:
     Sensor:
@@ -95,33 +65,23 @@ components:
           type: number
         light:
           type: number
-    # BasinFull:
-    #   type: object
-    #   properties:
-    #     basinId:
-    #       type: integer
-    #     name:
-    #       type: string
-    #     area:
-    #       type: number
-    #       description: Total basin area in sq.km
-    # StationShort:
-    #   type: object
-    #   properties:
-    #     stationId:
-    #       type: integer
-    #     name:
-    #       type: string
-    # StationFull:
-    #   type: object
-    #   properties:
-    #     stationId:
-    #       type: integer
-    #     basinId:
-    #       type: integer
-    #     name:
-    #       type: string
-    #     lat:
-    #       type: number
-    #     lon:
-    #       type: number
+    Accuracy:
+       type: object
+       properties:
+          humidity_accuracy_percentage:
+            type: integer
+          temperature_accuracy_percentage:
+            type: integer
+    Forecast:
+      type: object
+      properties:
+        time:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+        humidity:
+          type: number
+        temperature:
+          type: number
