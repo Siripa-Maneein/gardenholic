@@ -39,18 +39,23 @@ def get_avg_kidbright_sensors_data():
 
 def get_forecast_3hrs_data():
     with pool.connection() as conn, conn.cursor() as cs:
-        # Calculate the start timestamp dynamically for the specified date
-        start_timestamp = datetime.strptime('2023-11-22 10:00:00', '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:00:00')
+        # Specify the start date
+        start_date = datetime.strptime('2023-11-22 10:00:00', '%Y-%m-%d %H:%M:%S')
+
+        # Calculate the end date (start date + 3 days)
+        end_date = start_date + timedelta(days=3)
 
         cs.execute("""SELECT MIN(ts) AS ts, ROUND(AVG(lat), 4) AS lat,
                       ROUND(AVG(lon), 4) AS lon, AVG(humid) AS humid, AVG(temp) AS temp
                       FROM forecast 
-                      WHERE ts >= %s
+                      WHERE ts BETWEEN %s AND %s
                       GROUP BY TIMESTAMPDIFF(HOUR, %s, ts) DIV 3 
-                      ORDER BY ts;""", (start_timestamp, start_timestamp))
+                      ORDER BY ts;""", (start_date, end_date, start_date))
 
         result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
+
+
 
 
 
