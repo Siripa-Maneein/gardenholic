@@ -7,7 +7,7 @@ info:
     Thai Meteorological Department (TMD) API.
   version: 1.0.0
 servers:
-  - url: http://127.0.0.1:8080/gardenholic-api/v2
+  - url: /gardenholic-api/v1
 paths:
   /sensors:
     get:
