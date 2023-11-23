@@ -22,6 +22,39 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Sensor'
+  /sensors_hourly/:
+    get:
+      summary: Returns a list of sensor data in each hour of the current date.
+      operationId: controller.get_kidbright_sensors_data_hourly
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+  /sensors_hourly/{date}:
+    parameters:
+      - name: date
+        in: path
+        required: true
+        schema:
+          type : string
+    get:
+      summary: Returns a list of sensor data in each hou in the specified date.
+      operationId: controller.get_kidbright_sensors_data_hourly_by_date
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+    
   # /basins/{basinId}:
   #   parameters:
   #   - name: basinId
