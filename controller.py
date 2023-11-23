@@ -65,46 +65,47 @@ def get_forecast_data():
     return result
 
 def calculate_forecast_actual():
-    total_error_temp = 0
-    total_error_humid = 0
+    total_percentage_error_temp = 0
+    total_percentage_error_humid = 0
     total_count = 0
+
     forecast_data = get_forecast_3hrs_data()
     actual_data = get_actual_data()
-    accumulated_results = []
 
     for forecast_entry in forecast_data:
         closest_actual_entry = min(actual_data, key=lambda x: abs((forecast_entry.time - x.time).total_seconds()))
 
         timestamp_tolerance_seconds = 60 
         if abs((forecast_entry.time - closest_actual_entry.time).total_seconds()) <= timestamp_tolerance_seconds:
-            # Calculate MAPE for temperature
-            error_temp = abs((forecast_entry.temperature - closest_actual_entry.temperature) / closest_actual_entry.temperature) * 100
-            total_error_temp += error_temp
+            # Calculate percentage error for temperature
+            percentage_error_temp = ((forecast_entry.temperature - closest_actual_entry.temperature) / closest_actual_entry.temperature) * 100
+            total_percentage_error_temp += abs(percentage_error_temp)
 
-            # Calculate MAPE for humidity
-            error_humid = abs((forecast_entry.humidity - closest_actual_entry.humidity) / closest_actual_entry.humidity) * 100
-            total_error_humid += error_humid
+            # Calculate percentage error for humidity
+            percentage_error_humid = ((forecast_entry.humidity - closest_actual_entry.humidity) / closest_actual_entry.humidity) * 100
+            total_percentage_error_humid += abs(percentage_error_humid)
 
             total_count += 1
 
-            if total_count > 0:
-                average_error_temp = total_error_temp / total_count
-                accuracy_temp = 100 - average_error_temp
+    if total_count > 0:
+        average_percentage_error_temp = total_percentage_error_temp / total_count
+        forecast_accuracy_temp = 100 - average_percentage_error_temp
 
-                average_error_humid = total_error_humid / total_count
-                accuracy_humid = 100 - average_error_humid
-                result = models.Accuracy(round(accuracy_humid, 2), round(accuracy_temp, 2))
-                accumulated_results.append(result)
+        average_percentage_error_humid = total_percentage_error_humid / total_count
+        forecast_accuracy_humid = 100 - average_percentage_error_humid
 
-    if accumulated_results:
-        return accumulated_results
-    else:
-        return None  
+        result = models.Accuracy(round(forecast_accuracy_humid, 2), round(forecast_accuracy_temp, 2))
+        return [result] 
+
+    return None
+
+
     
 def calculate_mape_sensors():
-    total_error_temp = 0
-    total_error_humid = 0
+    total_percentage_error_temp = 0
+    total_percentage_error_humid = 0
     total_count = 0
+
     forecast_data = get_forecast_data()
     actual_data = get_avg_kidbright_sensors_data()
     accumulated_results = []
@@ -114,26 +115,27 @@ def calculate_mape_sensors():
 
         timestamp_tolerance_seconds = 60  
         if abs((forecast_entry.time - closest_actual_entry.time).total_seconds()) <= timestamp_tolerance_seconds:
-            # Calculate MAPE for temperature
-            error_temp = abs((forecast_entry.temperature - closest_actual_entry.temperature) / closest_actual_entry.temperature) * 100
-            total_error_temp += error_temp
+            # Calculate percentage error for temperature
+            percentage_error_temp = abs((forecast_entry.temperature - closest_actual_entry.temperature) / closest_actual_entry.temperature) * 100
+            total_percentage_error_temp += percentage_error_temp
 
-            # Calculate MAPE for humidity
-            error_humid = abs((forecast_entry.humidity - closest_actual_entry.humidity) / closest_actual_entry.humidity) * 100
-            total_error_humid += error_humid
+            # Calculate percentage error for humidity
+            percentage_error_humid = abs((forecast_entry.humidity - closest_actual_entry.humidity) / closest_actual_entry.humidity) * 100
+            total_percentage_error_humid += percentage_error_humid
 
             total_count += 1
 
-            if total_count > 0:
-                average_error_temp = total_error_temp / total_count
-                accuracy_temp = 100 - average_error_temp
+    if total_count > 0:
+        average_percentage_error_temp = total_percentage_error_temp / total_count
+        accuracy_temp = 100 - average_percentage_error_temp
 
-                average_error_humid = total_error_humid / total_count
-                accuracy_humid = 100 - average_error_humid
-                result = models.Accuracy(round(accuracy_humid, 2), round(accuracy_temp, 2))
-                accumulated_results.append(result)
+        average_percentage_error_humid = total_percentage_error_humid / total_count
+        accuracy_humid = 100 - average_percentage_error_humid
+
+        result = models.Accuracy(round(accuracy_humid, 2), round(accuracy_temp, 2))
+        accumulated_results.append(result)
 
     if accumulated_results:
         return accumulated_results
     else:
-        return None 
+        return None
