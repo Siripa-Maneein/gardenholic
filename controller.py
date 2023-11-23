@@ -34,15 +34,10 @@ def get_avg_kidbright_sensors_data():
         result = [models.Forecast(datetime.strptime(value[2], '%Y-%m-%d %H:00:00'), value[0], value[1], value[3], value[4]) for value in cs.fetchall()]
     return result
 
-
-
-
 def get_forecast_3hrs_data():
     with pool.connection() as conn, conn.cursor() as cs:
-        # Specify the start date
         start_date = datetime.strptime('2023-11-22 10:00:00', '%Y-%m-%d %H:%M:%S')
 
-        # Calculate the end date (start date + 3 days)
         end_date = start_date + timedelta(days=3)
 
         cs.execute("""SELECT MIN(ts) AS ts, ROUND(AVG(lat), 4) AS lat,
@@ -54,10 +49,6 @@ def get_forecast_3hrs_data():
 
         result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
-
-
-
-
 
 def get_actual_data():
     with pool.connection() as conn, conn.cursor() as cs:
@@ -84,8 +75,7 @@ def calculate_forecast_actual():
     for forecast_entry in forecast_data:
         closest_actual_entry = min(actual_data, key=lambda x: abs((forecast_entry.time - x.time).total_seconds()))
 
-        # Check if the entries correspond to the same timestamp within a tolerance
-        timestamp_tolerance_seconds = 60  # Adjust as needed
+        timestamp_tolerance_seconds = 60 
         if abs((forecast_entry.time - closest_actual_entry.time).total_seconds()) <= timestamp_tolerance_seconds:
             # Calculate MAPE for temperature
             error_temp = abs((forecast_entry.temperature - closest_actual_entry.temperature) / closest_actual_entry.temperature) * 100
@@ -97,7 +87,6 @@ def calculate_forecast_actual():
 
             total_count += 1
 
-            # Calculate accuracy and append to accumulated_results
             if total_count > 0:
                 average_error_temp = total_error_temp / total_count
                 accuracy_temp = 100 - average_error_temp
@@ -110,7 +99,8 @@ def calculate_forecast_actual():
     if accumulated_results:
         return accumulated_results
     else:
-        return None  # Handle the case where there is no corresponding actual data for any forecast entry
+        return None  
+    
 def calculate_mape_sensors():
     total_error_temp = 0
     total_error_humid = 0
@@ -122,8 +112,7 @@ def calculate_mape_sensors():
     for forecast_entry in forecast_data:
         closest_actual_entry = min(actual_data, key=lambda x: abs((forecast_entry.time - x.time).total_seconds()))
 
-        # Check if the entries correspond to the same timestamp within a tolerance
-        timestamp_tolerance_seconds = 60  # Adjust as needed
+        timestamp_tolerance_seconds = 60  
         if abs((forecast_entry.time - closest_actual_entry.time).total_seconds()) <= timestamp_tolerance_seconds:
             # Calculate MAPE for temperature
             error_temp = abs((forecast_entry.temperature - closest_actual_entry.temperature) / closest_actual_entry.temperature) * 100
@@ -135,7 +124,6 @@ def calculate_mape_sensors():
 
             total_count += 1
 
-            # Calculate accuracy and append to accumulated_results
             if total_count > 0:
                 average_error_temp = total_error_temp / total_count
                 accuracy_temp = 100 - average_error_temp
