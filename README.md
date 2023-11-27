@@ -118,5 +118,5 @@ Check the forecast api and your plant humidity
 
     Response Example:
     ```
-    True
+    {"result": True}
     ```
