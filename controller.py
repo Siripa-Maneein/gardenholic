@@ -5,6 +5,7 @@ from dbutils.pooled_db import PooledDB
 from config import OPENAPI_STUB_DIR, DB_HOST, DB_USER, DB_PASSWD, DB_NAME
 from datetime import datetime, timedelta
 
+
 sys.path.append(OPENAPI_STUB_DIR)
 from swagger_server import models
 
@@ -139,3 +140,37 @@ def calculate_mape_sensors():
         return accumulated_results
     else:
         return None
+def get_kidbright_sensors_data_hourly():
+    """Show time, lat, lon, soil, humidity, temperature, light data from kidbright source in each hour."""
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+                   SELECT DATE_FORMAT(ts, '%Y-%m-%d %H:00:00') AS hour_group, 
+                    AVG(lat) AS avg_lat,
+                    AVG(lon) AS avg_lon, 
+                    AVG(soil) AS avg_soil, 
+                    AVG(humid) AS avg_humid, 
+                    AVG(temp) AS avg_temp, 
+                    AVG(light) AS avg_light 
+                   FROM gardener 
+                   GROUP BY hour_group
+                   """)
+        current_date = datetime.now().strftime('%Y-%m-%d')
+        result = [models.Sensor(value[0], round(value[1], 2), round(value[2], 2), round(value[3], 2), round(value[4], 2), round(value[5], 2)) for value in cs.fetchall() if current_date in str(value[0])]
+    return result
+
+def get_kidbright_sensors_data_hourly_by_date(date):
+    """Show time, lat, lon, soil, humidity, temperature, light data from kidbright source in each hour in a specific date."""
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+                   SELECT DATE_FORMAT(ts, '%Y-%m-%d %H:00:00') AS hour_group, 
+                    AVG(lat) AS avg_lat,
+                    AVG(lon) AS avg_lon, 
+                    AVG(soil) AS avg_soil, 
+                    AVG(humid) AS avg_humid, 
+                    AVG(temp) AS avg_temp, 
+                    AVG(light) AS avg_light 
+                   FROM gardener 
+                   GROUP BY hour_group
+                   """)
+        result = [models.Sensor(value[0], round(value[1], 2), round(value[2], 2), round(value[3], 2), round(value[4], 2), round(value[5], 2)) for value in cs.fetchall() if date in str(value[0])]
+    return result
