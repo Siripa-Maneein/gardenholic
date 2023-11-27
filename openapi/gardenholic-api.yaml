@@ -22,9 +22,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Sensor'
-  /tmb_accuracy/sensors:
+  /tmd_accuracy/sensors:
     get:
-      summary: Compare forecast and sensors data for the past 3 days and calculate accuracy.
+      summary: Compare forecast data from https://data.tmd.go.th/nwpapi/v1/forecast/location/hourly/ and sensors data for the past 3 days and calculate accuracy.
       operationId: controller.calculate_mape_sensors
       responses:
         200:
@@ -33,9 +33,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Accuracy'
-  /tmb_accuracy:
+  /tmd_accuracy:
     get:
-      summary: Compare forecast and actual data for the past 3 days and calculate accuracy.
+      summary: Compare forecast data and actual data from  https://data.tmd.go.th/api/Weather3Hours/ for the past 3 days and calculate accuracy.
       operationId: controller.calculate_forecast_actual
       responses:
         200:
