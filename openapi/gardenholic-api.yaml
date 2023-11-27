@@ -23,7 +23,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Sensor'
 
-  /sensors_hourly/:
+  /sensors_hourly:
     get:
       summary: Returns a list of sensor data in each hour of the current date.
       operationId: controller.get_kidbright_sensors_data_hourly
@@ -80,6 +80,18 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Sensor'
+  /should_I_water_my_plant:
+    get:
+      summary: Returns boolean wheter user should water their plant or not
+      operationId: controller.get_remind_water_my_plant
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/WaterPlant'
 
 components:
   schemas:
@@ -101,8 +113,8 @@ components:
         light:
           type: number
     Accuracy:
-       type: object
-       properties:
+      type: object
+      properties:
           humidity_accuracy_percentage:
             type: integer
           temperature_accuracy_percentage:
@@ -120,4 +132,22 @@ components:
           type: number
         temperature:
           type: number
-
+    CurrentSoil:
+      type: object
+      properties:
+        time:
+          type: string
+        soil:
+          type: number
+    ForcastHumid:
+      type: object
+      properties:
+        time:
+          type: string
+        humid:
+          type: number
+    WaterPlant:
+      type: object
+      properties:
+        water:
+          type: string
