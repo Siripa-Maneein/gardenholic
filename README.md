@@ -4,7 +4,8 @@ GardenHolic API Server
 API
 
 1. /sensors_hourly <br>
-Show time, lat, lon, soil, humidity, temperature, light data from kidbright source in each hour
+Show time, lat, lon, soil, humidity, temperature, light data from kidbright source in each hour of current date
+
     Response example:
     ```
     [
@@ -58,7 +59,7 @@ Show time, lat, lon, soil, humidity, temperature, light data from kidbright sour
     ]
     ```
 
-4. /tmb_accuracy <br>
+3. /tmb_accuracy <br>
 Compare forecast api and actual api at the same hour for the past 3 days
 
     ***Noted that the forecast data need to be grouped into 3-hours interval first.
@@ -89,7 +90,7 @@ Compare forecast api and actual api at the same hour for the past 3 days
     }
     ```
     
-5. /tmb_accuracy/sensors <br>
+4. /tmb_accuracy/sensors <br>
 Compare forecast api and sensors data collected at the same hour for the past 3 days
 
     ***Noted that the sensors data need to be grouped into 1-hour interval first.
@@ -102,4 +103,20 @@ Compare forecast api and sensors data collected at the same hour for the past 3 
         "humidity_accuracy_percentage": 90,
         "temperature_accuracy_percentage": 89,
     }
+    ```
+
+5. /should_I_water_my_plant <br>
+Check the forecast api and your plant humidity
+
+    ```
+    if soil moisture < 50%:
+        if in 24 hours, it will rain (usually humidity higher than 90%):
+            return "don't water the plant" aka "False"
+        return "water the plant" aka "True"
+    return "don't water the plant" aka "False"
+    ```
+
+    Response Example:
+    ```
+    {"result": True}
     ```

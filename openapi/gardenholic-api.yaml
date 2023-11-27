@@ -1,13 +1,13 @@
 openapi: 3.0.0
 info:
   title: GardenHolic API
-  description:
-    This API provides sensor data from kidbright board at Ploy's house. 
-    Also, it provides and analyses weather data information from 
+  description: |
+    This API provides sensor data from the KidBright board at Ploy's house. 
+    Also, it provides and analyzes weather data information from 
     Thai Meteorological Department (TMD) API.
   version: 1.0.0
 servers:
-- url: /gardenholic-api/v1
+  - url: /gardenholic-api/v1
 paths:
   /sensors:
     get:
@@ -19,6 +19,64 @@ paths:
           content:
             application/json:
               schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+
+  /sensors_hourly/:
+    get:
+      summary: Returns a list of sensor data in each hour of the current date.
+      operationId: controller.get_kidbright_sensors_data_hourly
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+  /sensors_hourly/{date}:
+    parameters:
+      - name: date
+        in: path
+        required: true
+        schema:
+          type : string
+    get:
+      summary: Returns a list of sensor data in each hou in the specified date.
+      operationId: controller.get_kidbright_sensors_data_hourly_by_date
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+  /tmd_accuracy/sensors:
+    get:
+      summary: Compare forecast data from https://data.tmd.go.th/nwpapi/v1/forecast/location/hourly/ and sensors data for the past 3 days and calculate accuracy.
+      operationId: controller.calculate_mape_sensors
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accuracy'
+  /tmd_accuracy:
+    get:
+      summary: Compare forecast data and actual data from  https://data.tmd.go.th/api/Weather3Hours/ for the past 3 days and calculate accuracy.
+      operationId: controller.calculate_forecast_actual
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accuracy'
                 type: array
                 items:
                   $ref: '#/components/schemas/Sensor'
@@ -54,7 +112,26 @@ components:
           type: number
         light:
           type: number
-
+    Accuracy:
+      type: object
+      properties:
+          humidity_accuracy_percentage:
+            type: integer
+          temperature_accuracy_percentage:
+            type: integer
+    Forecast:
+      type: object
+      properties:
+        time:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+        humidity:
+          type: number
+        temperature:
+          type: number
     CurrentSoil:
       type: object
       properties:
@@ -62,7 +139,6 @@ components:
           type: string
         soil:
           type: number
-
     ForcastHumid:
       type: object
       properties:
@@ -70,7 +146,6 @@ components:
           type: string
         humid:
           type: number
-
     WaterPlant:
       type: object
       properties:
