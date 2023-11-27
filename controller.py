@@ -21,6 +21,46 @@ def get_kidbright_sensors_data():
         result = [models.Sensor(value[0], value[1], value[2], value[3], value[4], value[5]) for value in cs.fetchall()]
     return result
 
+def get_latest_soil_humid():
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+                    SELECT ts, soil
+                    FROM gardener
+                    ORDER by ts DESC
+                    LIMIT 1
+                """)
+        result = [models.CurrentSoil(value[0], value[1]) for value in cs.fetchall()]
+    return result
+
+def get_forecast_humid():
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+                    SELECT ts, humid
+                    FROM forecast
+                    WHERE humid >= 90 AND ts >= NOW() AND ts <= DATE_ADD(NOW(), INTERVAL 24 HOUR)
+                    ORDER BY ts DESC
+                """)
+        result = [models.ForcastHumid(value[0], value[1]) for value in cs.fetchall()]
+    return result
+
+def get_remind_water_my_plant():
+    soil = get_latest_soil_humid()
+    humid = get_forecast_humid()
+    water = False  
+    
+    if int(soil[0].soil) < 50:
+        if len(humid) > 0:
+            if int(humid[0].humid) >= 90:
+                water = False
+        water = True
+    else:
+        water = False
+    
+    result = models.WaterPlant(water)
+    # result = models.WaterPlant(humid)
+    return result
+
+    
 # def get_basin_details(basin_id):
 #     with pool.connection() as conn, conn.cursor() as cs:
 #         cs.execute("""

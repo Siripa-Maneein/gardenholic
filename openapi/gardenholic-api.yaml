@@ -22,59 +22,18 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Sensor'
-  # /basins/{basinId}:
-  #   parameters:
-  #   - name: basinId
-  #     in: path
-  #     required: true
-  #     schema:
-  #       type : integer
-  #   get:
-  #     summary: Returns complete details of the specified basin
-  #     operationId: controller.get_basin_details
-  #     responses:
-  #       200:
-  #         description: Success
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/BasinFull'
-  # /basins/{basinId}/stations:
-  #   parameters:
-  #   - name: basinId
-  #     in: path
-  #     required: true
-  #     schema:
-  #       type : integer
-  #   get:
-  #     summary: Returns a list of stations located within the specified basin.
-  #     operationId: controller.get_stations
-  #     responses:
-  #       200:
-  #         description: Success
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 $ref: '#/components/schemas/StationShort'
-  # /stations/{stationId}:
-  #   parameters:
-  #   - name: stationId
-  #     in: path
-  #     required: true
-  #     schema:
-  #       type : integer
-  #   get:
-  #     summary: Returns complete details of the specified station
-  #     operationId: controller.get_station_details
-  #     responses:
-  #       200:
-  #         description: Success
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/StationFull'
+  /should_I_water_my_plant:
+    get:
+      summary: Returns boolean wheter user should water their plant or not
+      operationId: controller.get_remind_water_my_plant
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/WaterPlant'
 
 components:
   schemas:
@@ -95,33 +54,25 @@ components:
           type: number
         light:
           type: number
-    # BasinFull:
-    #   type: object
-    #   properties:
-    #     basinId:
-    #       type: integer
-    #     name:
-    #       type: string
-    #     area:
-    #       type: number
-    #       description: Total basin area in sq.km
-    # StationShort:
-    #   type: object
-    #   properties:
-    #     stationId:
-    #       type: integer
-    #     name:
-    #       type: string
-    # StationFull:
-    #   type: object
-    #   properties:
-    #     stationId:
-    #       type: integer
-    #     basinId:
-    #       type: integer
-    #     name:
-    #       type: string
-    #     lat:
-    #       type: number
-    #     lon:
-    #       type: number
+
+    CurrentSoil:
+      type: object
+      properties:
+        time:
+          type: string
+        soil:
+          type: number
+
+    ForcastHumid:
+      type: object
+      properties:
+        time:
+          type: string
+        humid:
+          type: number
+
+    WaterPlant:
+      type: object
+      properties:
+        water:
+          type: string
