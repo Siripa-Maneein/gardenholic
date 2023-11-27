@@ -19,12 +19,13 @@ pool = PooledDB(creator=pymysql,
 
 def get_kidbright_sensors_data():
     with pool.connection() as conn, conn.cursor() as cs:
-        cs.execute("""SELECT ts, lat, lon, soil, humid, temp, light 
-                   FROM gardener""")
+        cs.execute("""
+                    SELECT ts, lat, lon, soil, humid, temp, light 
+                    FROM gardener""")
         result = [models.Sensor(value[0], value[1], value[2], value[3], value[4], value[5]) for value in cs.fetchall()]
     return result
 
-<<<<<<< HEAD
+
 def get_latest_soil_humid():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
@@ -61,7 +62,6 @@ def get_remind_water_my_plant():
         water = False
     
     result = models.WaterPlant(water)
-    # result = models.WaterPlant(humid)
     return result
 
     
@@ -82,41 +82,41 @@ def get_remind_water_my_plant():
 def get_avg_kidbright_sensors_data():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""SELECT lat, lon, DATE_FORMAT(ts, '%%Y-%%m-%%d %%H:00:00') AS hour,
-                   AVG(temp) AS temp, AVG(humid) AS humid
-                   FROM gardener 
-                   WHERE ts >= %s
-                   GROUP BY lat, lon, hour ORDER BY hour""",
-                   ((datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'),))
+                    AVG(temp) AS temp, AVG(humid) AS humid
+                    FROM gardener 
+                    WHERE ts >= %s
+                    GROUP BY lat, lon, hour ORDER BY hour""",
+                    ((datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'),))
         result = [models.Forecast(datetime.strptime(value[2], '%Y-%m-%d %H:00:00'), value[0], value[1], value[3], value[4]) for value in cs.fetchall()]
     return result
 
 def get_forecast_3hrs_data():
     with pool.connection() as conn, conn.cursor() as cs:
-        start_date = datetime.strptime('2023-11-22 10:00:00', '%Y-%m-%d %H:%M:%S')
-
-        end_date = start_date + timedelta(days=3)
+        current_datetime = datetime.now()
+        start_date = current_datetime - timedelta(days=3)
 
         cs.execute("""SELECT MIN(ts) AS ts, ROUND(AVG(lat), 4) AS lat,
-                      ROUND(AVG(lon), 4) AS lon, AVG(humid) AS humid, AVG(temp) AS temp
-                      FROM forecast 
-                      WHERE ts BETWEEN %s AND %s
-                      GROUP BY TIMESTAMPDIFF(HOUR, %s, ts) DIV 3 
-                      ORDER BY ts;""", (start_date, end_date, start_date))
+                        ROUND(AVG(lon), 4) AS lon, AVG(humid) AS humid, AVG(temp) AS temp
+                        FROM forecast 
+                        WHERE ts BETWEEN %s AND %s
+                        GROUP BY DATE_FORMAT(ts, '%%Y-%%m-%%d %%H:00:00')
+                        ORDER BY ts;""", (start_date, current_datetime))
 
         result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
+
     return result
 
 def get_actual_data():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("SELECT ts, lat, lon, humid, temp FROM actual "
-                   "WHERE ts >= %s", (datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'))
+                    "WHERE ts >= %s", (datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'))
         result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
 def get_forecast_data():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("SELECT ts, lat, lon, humid, temp FROM forecast "
-                   "WHERE ts >= %s", (datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'))
+                    "WHERE ts >= %s", (datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'))
         result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
@@ -194,20 +194,21 @@ def calculate_mape_sensors():
         return accumulated_results
     else:
         return None
+    
 def get_kidbright_sensors_data_hourly():
     """Show time, lat, lon, soil, humidity, temperature, light data from kidbright source in each hour."""
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
-                   SELECT DATE_FORMAT(ts, '%Y-%m-%d %H:00:00') AS hour_group, 
+                    SELECT DATE_FORMAT(ts, '%Y-%m-%d %H:00:00') AS hour_group, 
                     AVG(lat) AS avg_lat,
                     AVG(lon) AS avg_lon, 
                     AVG(soil) AS avg_soil, 
                     AVG(humid) AS avg_humid, 
                     AVG(temp) AS avg_temp, 
                     AVG(light) AS avg_light 
-                   FROM gardener 
-                   GROUP BY hour_group
-                   """)
+                    FROM gardener 
+                    GROUP BY hour_group
+                    """)
         current_date = datetime.now().strftime('%Y-%m-%d')
         result = [models.Sensor(value[0], round(value[1], 2), round(value[2], 2), round(value[3], 2), round(value[4], 2), round(value[5], 2)) for value in cs.fetchall() if current_date in str(value[0])]
     return result
@@ -216,15 +217,15 @@ def get_kidbright_sensors_data_hourly_by_date(date):
     """Show time, lat, lon, soil, humidity, temperature, light data from kidbright source in each hour in a specific date."""
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
-                   SELECT DATE_FORMAT(ts, '%Y-%m-%d %H:00:00') AS hour_group, 
+                    SELECT DATE_FORMAT(ts, '%Y-%m-%d %H:00:00') AS hour_group, 
                     AVG(lat) AS avg_lat,
                     AVG(lon) AS avg_lon, 
                     AVG(soil) AS avg_soil, 
                     AVG(humid) AS avg_humid, 
                     AVG(temp) AS avg_temp, 
                     AVG(light) AS avg_light 
-                   FROM gardener 
-                   GROUP BY hour_group
-                   """)
+                    FROM gardener 
+                    GROUP BY hour_group
+                    """)
         result = [models.Sensor(value[0], round(value[1], 2), round(value[2], 2), round(value[3], 2), round(value[4], 2), round(value[5], 2)) for value in cs.fetchall() if date in str(value[0])]
     return result
