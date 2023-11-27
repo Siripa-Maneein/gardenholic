@@ -23,7 +23,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Sensor'
 
-  /sensors_hourly/:
+  /sensors_hourly:
     get:
       summary: Returns a list of sensor data in each hour of the current date.
       operationId: controller.get_kidbright_sensors_data_hourly
