@@ -37,18 +37,17 @@ def get_avg_kidbright_sensors_data():
 
 def get_forecast_3hrs_data():
     with pool.connection() as conn, conn.cursor() as cs:
-        current_datetime = datetime.now()
-        start_date = current_datetime - timedelta(days=3)
+        start_date = datetime.now()
+        end_date = start_date - timedelta(days=3)
 
         cs.execute("""SELECT MIN(ts) AS ts, ROUND(AVG(lat), 4) AS lat,
                       ROUND(AVG(lon), 4) AS lon, AVG(humid) AS humid, AVG(temp) AS temp
                       FROM forecast 
                       WHERE ts BETWEEN %s AND %s
-                      GROUP BY DATE_FORMAT(ts, '%%Y-%%m-%%d %%H:00:00')
-                      ORDER BY ts;""", (start_date, current_datetime))
+                      GROUP BY TIMESTAMPDIFF(HOUR, %s, ts) DIV 3 
+                      ORDER BY ts;""", (end_date, start_date, end_date))
 
         result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
-
     return result
 
 def get_actual_data():
