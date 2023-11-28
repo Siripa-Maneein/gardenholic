@@ -9,17 +9,6 @@ info:
 servers:
   - url: /gardenholic-api/v1
 paths:
-  /sensors:
-    get:
-      summary: Returns a list of all sensor data from kidbright.
-      operationId: controller.get_kidbright_sensors_data
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Sensor'
   /latest_sensor:
     get:
       summary: Returns the latest sensor data from kidbright.
