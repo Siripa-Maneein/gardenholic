@@ -22,7 +22,7 @@ def get_kidbright_sensors_data():
         cs.execute("""
                     SELECT ts, lat, lon, soil, humid, temp, light 
                     FROM gardener""")
-        result = [models.Sensor(value[0], value[1], value[2], value[3], value[4], value[5]) for value in cs.fetchall()]
+        result = [models.Sensor(value[0], value[1], value[2], value[3], value[4], value[5], value[6]) for value in cs.fetchall()]
     return result
 
 
@@ -198,20 +198,33 @@ def calculate_mape_sensors():
 def get_kidbright_sensors_data_hourly():
     """Show time, lat, lon, soil, humidity, temperature, light data from kidbright source in each hour."""
     with pool.connection() as conn, conn.cursor() as cs:
-        cs.execute("""
-                    SELECT DATE_FORMAT(ts, '%Y-%m-%d %H:00:00') AS hour_group, 
-                    AVG(lat) AS avg_lat,
-                    AVG(lon) AS avg_lon, 
-                    AVG(soil) AS avg_soil, 
-                    AVG(humid) AS avg_humid, 
-                    AVG(temp) AS avg_temp, 
-                    AVG(light) AS avg_light 
-                    FROM gardener 
-                    GROUP BY hour_group
-                    """)
-        current_date = datetime.now().strftime('%Y-%m-%d')
-        result = [models.Sensor(value[0], round(value[1], 2), round(value[2], 2), round(value[3], 2), round(value[4], 2), round(value[5], 2)) for value in cs.fetchall() if current_date in str(value[0])]
-    return result
+        # cs.execute("""
+        #             SELECT DATE_FORMAT(ts, '%Y-%m-%d %H:00:00') AS hour_group, 
+        #             AVG(lat) AS avg_lat,
+        #             AVG(lon) AS avg_lon, 
+        #             AVG(soil) AS avg_soil, 
+        #             AVG(humid) AS avg_humid, 
+        #             AVG(temp) AS avg_temp, 
+        #             AVG(light) AS avg_light 
+        #             FROM gardener 
+        #             GROUP BY hour_group
+        #             """)
+        # current_date = datetime.now().strftime('%Y-%m-%d')
+        # result = [models.Sensor(value[0], round(value[1], 2), round(value[2], 2), round(value[3], 2), round(value[4], 2), round(value[5], 2), round(value[6], 2)) for value in cs.fetchall() if current_date in str(value[0])]
+        cs.execute("""SELECT DATE_FORMAT(ts, '%%Y-%%m-%%d %%H:00:00') AS hour,
+                        AVG(lat) AS avg_lat,
+                        AVG(lon) AS avg_lon, 
+                        AVG(soil) AS avg_soil, 
+                        AVG(humid) AS avg_humid, 
+                        AVG(temp) AS avg_temp, 
+                        AVG(light) AS avg_light
+                        FROM gardener 
+                        WHERE ts >= %s
+                        GROUP BY lat, lon, hour 
+                        ORDER BY hour""",
+                      ((datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:00:00'),))
+        result = [models.Sensor(value[0], round(value[1], 2), round(value[2], 2), round(value[3], 2), round(value[4], 2), round(value[5], 2), round(value[6], 2)) for value in cs.fetchall()]
+        return result
 
 def get_kidbright_sensors_data_hourly_by_date(date):
     """Show time, lat, lon, soil, humidity, temperature, light data from kidbright source in each hour in a specific date."""

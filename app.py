@@ -18,6 +18,7 @@ sys.path.append(OPENAPI_STUB_DIR)
 
 try:
     import connexion
+    from flask_cors import CORS
 except ModuleNotFoundError:
     print("Please install all required packages by running:"
           " pip install -r requirements.txt")
@@ -31,6 +32,8 @@ def main():
     app.add_api('gardenholic-api.yaml',
                 arguments={'title': 'GardenHolic API'},
                 pythonic_params=True)
+    
+    CORS(app.app)
 
     app.run(port=8080, debug=True)
 
