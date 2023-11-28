@@ -29,9 +29,52 @@ Show time, lat, lon, soil, humidity, temperature, light data from kidbright sour
     }, ...
     ]
     ```
+2. /latest_sensor <br>
+Returns the latest sensor data from kidbright.
 
-2. /sensors_hourly/{date} <br>
-Show time, lat, lon, soil, humidity, temperature, light data from kidbright source in each hour in a specific date
+    Response example:
+    ```
+    {
+        "humidity": 57,
+        "lat": 13.5795,
+        "light": 165.523,
+        "lon": 100.593,
+        "soil": 0,
+        "temperature": 27.25,
+        "time": "2023-11-22T10:00:00Z"
+    }
+    ```
+
+3. /sensors_hourly/{duration} <br>
+Returns a list of sensor data in each hour of the past {duration} day.
+
+    /sensors_hourly/3
+
+    Response example:
+    ```
+    [
+    {
+        "humidity": 57,
+        "lat": 13.5795,
+        "light": 165.523,
+        "lon": 100.593,
+        "soil": 0,
+        "temperature": 27.25,
+        "time": "the_previous_3_days_time"
+    }, ...,
+    {
+        "humidity": 57,
+        "lat": 13.5795,
+        "light": 165.523,
+        "lon": 100.593,
+        "soil": 0,
+        "temperature": 27.25,
+        "time": "today_time"
+    }
+    ]
+    ```
+4. /sensors_hourly_by_date/{date} <br>
+Returns a list of sensor data in each hour in the specified date.
 
     /sensors_hourly/2023-11-22
 
@@ -58,8 +101,13 @@ Show time, lat, lon, soil, humidity, temperature, light data from kidbright sour
     }
     ]
     ```
+5. /forecast_data <br>
+Return forecast data collected from TMD for the past 3 days
 
-3. /tmb_accuracy <br>
+6. /actual_data <br>
+Return actual data collected from TMD for the past 3 days
+
+7. /tmb_accuracy <br>
 Compare forecast api and actual api at the same hour for the past 3 days
 
     ***Noted that the forecast data need to be grouped into 3-hours interval first.
@@ -90,7 +138,7 @@ Compare forecast api and actual api at the same hour for the past 3 days
     }
     ```
     
-4. /tmb_accuracy/sensors <br>
+8. /tmb_accuracy/sensors <br>
 Compare forecast api and sensors data collected at the same hour for the past 3 days
 
     ***Noted that the sensors data need to be grouped into 1-hour interval first.
@@ -105,7 +153,7 @@ Compare forecast api and sensors data collected at the same hour for the past 3 
     }
     ```
 
-5. /should_I_water_my_plant <br>
+9. /should_I_water_my_plant <br>
 Check the forecast api and your plant humidity
 
     ```

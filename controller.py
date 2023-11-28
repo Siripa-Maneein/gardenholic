@@ -22,8 +22,19 @@ def get_kidbright_sensors_data():
         cs.execute("""
                     SELECT ts, lat, lon, soil, humid, temp, light 
                     FROM gardener""")
-        result = [models.Sensor(value[0], value[1], value[2], value[3], value[4], value[5], value[6]) for value in cs.fetchall()]
+        result = [models.Sensor(value[0], round(value[1], 2), round(value[2], 2), round(value[3], 2), round(value[4], 2), round(value[5], 2), round(value[6], 2)) for value in cs.fetchall()]
     return result
+
+def get_latest_kidbright_sensors_data():
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+                    SELECT ts, lat, lon, soil, humid, temp, light 
+                    FROM gardener
+                    ORDER by ts DESC
+                    LIMIT 1
+                   """)
+        result = cs.fetchone()
+    return models.Sensor(result[0], round(result[1], 2), round(result[2], 2), round(result[3], 2), round(result[4], 2), round(result[5], 2), round(result[6], 2))
 
 
 def get_latest_soil_humid():
@@ -64,21 +75,6 @@ def get_remind_water_my_plant():
     result = models.WaterPlant(water)
     return result
 
-    
-# def get_basin_details(basin_id):
-#     with pool.connection() as conn, conn.cursor() as cs:
-#         cs.execute("""
-#             SELECT basin_id, ename, area
-#             FROM basin
-#             WHERE basin_id=%s
-#             """, [basin_id])
-#         result = cs.fetchone()
-#     if result:
-#         basin_id, name, area = result
-#         return models.BasinFull(basin_id, name, area)
-#     else:
-#         abort(404)
-
 def get_avg_kidbright_sensors_data():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("SELECT MAX(ts) FROM actual;")
@@ -114,10 +110,9 @@ def get_actual_data():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("SELECT MAX(ts) FROM actual;")
         most_recent_ts = cs.fetchone()[0]
-        #print("Most Recent Timestamp:", most_recent_ts)
         cs.execute("SELECT ts, lat, lon, humid, temp FROM actual "
                     "WHERE ts >= %s", (most_recent_ts - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'))
-        result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
+        result = [models.Actual(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
 def get_forecast_data():
@@ -139,20 +134,16 @@ def calculate_forecast_actual():
 
     for forecast_entry in forecast_data:
         closest_actual_entry = min(actual_data, key=lambda x: abs((forecast_entry.time - x.time).total_seconds()))
-        print("Most actual Timestamp:", closest_actual_entry.time)
-        print("Most forcast Timestamp:", forecast_entry.time)
         timestamp_tolerance_seconds = 60 
         if abs((forecast_entry.time - closest_actual_entry.time).total_seconds()) <= timestamp_tolerance_seconds:
             
             # Calculate percentage error for temperature
             percentage_error_temp = ((forecast_entry.temperature - closest_actual_entry.temperature) / closest_actual_entry.temperature) * 100
             total_percentage_error_temp += abs(percentage_error_temp)
-            print(percentage_error_temp)
 
             # Calculate percentage error for humidity
             percentage_error_humid = ((forecast_entry.humidity - closest_actual_entry.humidity) / closest_actual_entry.humidity) * 100
             total_percentage_error_humid += abs(percentage_error_humid)
-            print(percentage_error_humid)
 
             total_count += 1
 
@@ -208,22 +199,9 @@ def calculate_mape_sensors():
     else:
         return None
     
-def get_kidbright_sensors_data_hourly():
-    """Show time, lat, lon, soil, humidity, temperature, light data from kidbright source in each hour."""
+def get_kidbright_sensors_data_hourly(duration):
+    """Show time, lat, lon, soil, humidity, temperature, light data from kidbright source in each hour for the past given day."""
     with pool.connection() as conn, conn.cursor() as cs:
-        # cs.execute("""
-        #             SELECT DATE_FORMAT(ts, '%Y-%m-%d %H:00:00') AS hour_group, 
-        #             AVG(lat) AS avg_lat,
-        #             AVG(lon) AS avg_lon, 
-        #             AVG(soil) AS avg_soil, 
-        #             AVG(humid) AS avg_humid, 
-        #             AVG(temp) AS avg_temp, 
-        #             AVG(light) AS avg_light 
-        #             FROM gardener 
-        #             GROUP BY hour_group
-        #             """)
-        # current_date = datetime.now().strftime('%Y-%m-%d')
-        # result = [models.Sensor(value[0], round(value[1], 2), round(value[2], 2), round(value[3], 2), round(value[4], 2), round(value[5], 2), round(value[6], 2)) for value in cs.fetchall() if current_date in str(value[0])]
         cs.execute("""SELECT DATE_FORMAT(ts, '%%Y-%%m-%%d %%H:00:00') AS hour,
                         AVG(lat) AS avg_lat,
                         AVG(lon) AS avg_lon, 
@@ -235,7 +213,7 @@ def get_kidbright_sensors_data_hourly():
                         WHERE ts >= %s
                         GROUP BY lat, lon, hour 
                         ORDER BY hour""",
-                      ((datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:00:00'),))
+                      ((datetime.now() - timedelta(days=duration)).strftime('%Y-%m-%d %H:00:00'),))
         result = [models.Sensor(value[0], round(value[1], 2), round(value[2], 2), round(value[3], 2), round(value[4], 2), round(value[5], 2), round(value[6], 2)) for value in cs.fetchall()]
         return result
 

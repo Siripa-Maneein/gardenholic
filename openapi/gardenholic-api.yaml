@@ -11,8 +11,19 @@ servers:
 paths:
   /sensors:
     get:
-      summary: Returns a list of sensor data.
+      summary: Returns a list of all sensor data from kidbright.
       operationId: controller.get_kidbright_sensors_data
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+  /latest_sensor:
+    get:
+      summary: Returns the latest sensor data from kidbright.
+      operationId: controller.get_latest_kidbright_sensors_data
       responses:
         200:
           description: Success
@@ -23,9 +34,16 @@ paths:
                 items:
                   $ref: '#/components/schemas/Sensor'
 
-  /sensors_hourly:
+  /sensors_hourly/{duration}:
+    parameters:
+        - name: duration
+          in: path
+          required: true
+          schema:
+            type : integer
+            default: 1
     get:
-      summary: Returns a list of sensor data in each hour of the current date.
+      summary: Returns a list of sensor data in each hour of the past {duration} day.
       operationId: controller.get_kidbright_sensors_data_hourly
       responses:
         200:
@@ -36,7 +54,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Sensor'
-  /sensors_hourly/{date}:
+  /sensors_hourly_by_date/{date}:
     parameters:
       - name: date
         in: path
@@ -44,7 +62,7 @@ paths:
         schema:
           type : string
     get:
-      summary: Returns a list of sensor data in each hou in the specified date.
+      summary: Returns a list of sensor data in each hour in the specified date.
       operationId: controller.get_kidbright_sensors_data_hourly_by_date
       responses:
         200:
@@ -55,6 +73,32 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Sensor'
+  /forecast_data:
+    get:
+      summary: Return forecast data collected from TMD for the past 3 days
+      operationId: controller.get_forecast_data
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Forecast'
+  /actual_data:
+    get:
+      summary: Return actual data collected from TMD for the past 3 days
+      operationId: controller.get_actual_data
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Actual'
   /tmd_accuracy/sensors:
     get:
       summary: Compare forecast data from https://data.tmd.go.th/nwpapi/v1/forecast/location/hourly/ and sensors data for the past 3 days and calculate accuracy.
@@ -82,7 +126,7 @@ paths:
                   $ref: '#/components/schemas/Sensor'
   /should_I_water_my_plant:
     get:
-      summary: Returns boolean wheter user should water their plant or not
+      summary: Returns boolean indicating whether user should water their plant or not
       operationId: controller.get_remind_water_my_plant
       responses:
         200:
@@ -119,6 +163,19 @@ components:
             type: integer
           temperature_accuracy_percentage:
             type: integer
+    Actual:
+      type: object
+      properties:
+        time:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+        humidity:
+          type: number
+        temperature:
+          type: number
     Forecast:
       type: object
       properties:
