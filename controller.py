@@ -81,18 +81,22 @@ def get_remind_water_my_plant():
 
 def get_avg_kidbright_sensors_data():
     with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("SELECT MAX(ts) FROM actual;")
+        most_recent_ts = cs.fetchone()[0]
         cs.execute("""SELECT lat, lon, DATE_FORMAT(ts, '%%Y-%%m-%%d %%H:00:00') AS hour,
                     AVG(temp) AS temp, AVG(humid) AS humid
                     FROM gardener 
                     WHERE ts >= %s
                     GROUP BY lat, lon, hour ORDER BY hour""",
-                    ((datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'),))
+                    ((most_recent_ts - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'),))
         result = [models.Forecast(datetime.strptime(value[2], '%Y-%m-%d %H:00:00'), value[0], value[1], value[3], value[4]) for value in cs.fetchall()]
     return result
 
 def get_forecast_3hrs_data():
     with pool.connection() as conn, conn.cursor() as cs:
-        start_date = datetime.now()
+        cs.execute("SELECT MAX(ts) FROM actual;")
+        most_recent_ts = cs.fetchone()[0]
+        start_date = most_recent_ts
         end_date = start_date - timedelta(days=3)
 
         cs.execute("""SELECT MIN(ts) AS ts, ROUND(AVG(lat), 4) AS lat,
@@ -108,15 +112,20 @@ def get_forecast_3hrs_data():
 
 def get_actual_data():
     with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("SELECT MAX(ts) FROM actual;")
+        most_recent_ts = cs.fetchone()[0]
+        #print("Most Recent Timestamp:", most_recent_ts)
         cs.execute("SELECT ts, lat, lon, humid, temp FROM actual "
-                    "WHERE ts >= %s", (datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'))
+                    "WHERE ts >= %s", (most_recent_ts - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'))
         result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
 def get_forecast_data():
     with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("SELECT MAX(ts) FROM actual;")
+        most_recent_ts = cs.fetchone()[0]
         cs.execute("SELECT ts, lat, lon, humid, temp FROM forecast "
-                    "WHERE ts >= %s", (datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'))
+                    "WHERE ts >= %s", (most_recent_ts - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'))
         result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
@@ -130,16 +139,20 @@ def calculate_forecast_actual():
 
     for forecast_entry in forecast_data:
         closest_actual_entry = min(actual_data, key=lambda x: abs((forecast_entry.time - x.time).total_seconds()))
-
+        print("Most actual Timestamp:", closest_actual_entry.time)
+        print("Most forcast Timestamp:", forecast_entry.time)
         timestamp_tolerance_seconds = 60 
         if abs((forecast_entry.time - closest_actual_entry.time).total_seconds()) <= timestamp_tolerance_seconds:
+            
             # Calculate percentage error for temperature
             percentage_error_temp = ((forecast_entry.temperature - closest_actual_entry.temperature) / closest_actual_entry.temperature) * 100
             total_percentage_error_temp += abs(percentage_error_temp)
+            print(percentage_error_temp)
 
             # Calculate percentage error for humidity
             percentage_error_humid = ((forecast_entry.humidity - closest_actual_entry.humidity) / closest_actual_entry.humidity) * 100
             total_percentage_error_humid += abs(percentage_error_humid)
+            print(percentage_error_humid)
 
             total_count += 1
 
