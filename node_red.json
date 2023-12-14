@@ -1,0 +1,1383 @@
+[
+    {
+        "id": "544f381916f55d45",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "d603077ea606dcdf",
+        "type": "http request",
+        "z": "544f381916f55d45",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8080/gardenholic-api/v1/sensors_hourly/1",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 390,
+        "y": 380,
+        "wires": [
+            [
+                "bccdbac893b6d98d",
+                "924c393908920102",
+                "00b457a3f83103f1",
+                "fceea4c85b2386ce"
+            ]
+        ]
+    },
+    {
+        "id": "1079f17af5b1c323",
+        "type": "ui_chart",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "b0abce287edf3f9c",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "label": "Soil Moisture",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 830,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bccdbac893b6d98d",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 1",
+        "func": "// Extract soil and time data\nvar data = msg.payload;\nvar chartData = data.map(entry => {\n    return { x: new Date(entry.time), y: entry.soil };\n});\n\n// Set the chart data\nmsg.payload = [{ series: ['Soil'], data: [chartData] }];\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 300,
+        "wires": [
+            [
+                "1079f17af5b1c323"
+            ]
+        ]
+    },
+    {
+        "id": "924c393908920102",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 2",
+        "func": "// Extract light and time data\nvar data = msg.payload;\nvar chartData = data.map(entry => {\n    return { x: new Date(entry.time), y: entry.light };\n});\n\n// Set the chart data\nmsg.payload = [{ series: ['Light'], data: [chartData] }];\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 340,
+        "wires": [
+            [
+                "ec4945204d4f7c59"
+            ]
+        ]
+    },
+    {
+        "id": "ec4945204d4f7c59",
+        "type": "ui_chart",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "b0abce287edf3f9c",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "Light Intensity",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 840,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "00b457a3f83103f1",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 3",
+        "func": "// Extract temperature and time data\nvar data = msg.payload;\nvar chartData = data.map(entry => {\n    return { x: new Date(entry.time), y: entry.temperature };\n});\n\n// Set the chart data\nmsg.payload = [{ series: ['Temperature'], data: [chartData] }];\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 380,
+        "wires": [
+            [
+                "8bc370450d58e3e4"
+            ]
+        ]
+    },
+    {
+        "id": "8bc370450d58e3e4",
+        "type": "ui_chart",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "b0abce287edf3f9c",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "label": "Temperature",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 830,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fceea4c85b2386ce",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 4",
+        "func": "// Extract humidity and time data\nvar data = msg.payload;\nvar chartData = data.map(entry => {\n    return { x: new Date(entry.time), y: entry.humidity };\n});\n\n// Set the chart data\nmsg.payload = [{ series: ['Humidity'], data: [chartData] }];\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 420,
+        "wires": [
+            [
+                "11efc8d9ec901d22"
+            ]
+        ]
+    },
+    {
+        "id": "11efc8d9ec901d22",
+        "type": "ui_chart",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "b0abce287edf3f9c",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "label": "Humidity",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 820,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "67c55a4d010d9d3c",
+        "type": "ui_gauge",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "b1509d37ab765a3e",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Soil Moisture",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#ca3838",
+            "#e6e600",
+            "#00b500"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 890,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "d073da9f3d15c179",
+        "type": "http request",
+        "z": "544f381916f55d45",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8080/gardenholic-api/v1/tmd_accuracy",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 390,
+        "y": 880,
+        "wires": [
+            [
+                "fda0f67f46ff9407",
+                "a261adf088722ae4"
+            ]
+        ]
+    },
+    {
+        "id": "fda0f67f46ff9407",
+        "type": "ui_gauge",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "e4e118406f5209a3",
+        "order": 1,
+        "width": 5,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Forecast API vs Actual API",
+        "label": "%",
+        "format": "{{msg.payload[0].humidity_accuracy_percentage}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 720,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "6bac32990c126c42",
+        "type": "ui_gauge",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "e4e118406f5209a3",
+        "order": 2,
+        "width": 5,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Forecast API vs Sensor data",
+        "label": "%",
+        "format": "{{payload[0].humidity_accuracy_percentage}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 720,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "238678dac268257c",
+        "type": "http request",
+        "z": "544f381916f55d45",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8080/gardenholic-api/v1/tmd_accuracy/sensors",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 390,
+        "y": 960,
+        "wires": [
+            [
+                "6bac32990c126c42",
+                "0b71120bf3bd3697"
+            ]
+        ]
+    },
+    {
+        "id": "a261adf088722ae4",
+        "type": "ui_gauge",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "48c4cc186cd53c78",
+        "order": 1,
+        "width": 5,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Forecast API vs Actual API",
+        "label": "%",
+        "format": "{{msg.payload[0]. temperature_accuracy_percentage}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 720,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "0b71120bf3bd3697",
+        "type": "ui_gauge",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "48c4cc186cd53c78",
+        "order": 2,
+        "width": 5,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Forecast API vs Sensor data",
+        "label": "%",
+        "format": "{{payload[0].temperature_accuracy_percentage}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 720,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "d93bb6c1c0293653",
+        "type": "inject",
+        "z": "544f381916f55d45",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 70,
+        "y": 660,
+        "wires": [
+            [
+                "d073da9f3d15c179",
+                "238678dac268257c",
+                "9a9152a1a4f5c2f3",
+                "d603077ea606dcdf",
+                "17fdebedabc86dec",
+                "0b12388f03c61740",
+                "2f9a320e2d86ba46",
+                "9cd174692f5eaba6"
+            ]
+        ]
+    },
+    {
+        "id": "9a9152a1a4f5c2f3",
+        "type": "http request",
+        "z": "544f381916f55d45",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8080/gardenholic-api/v1/should_I_water_my_plant",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 370,
+        "y": 1060,
+        "wires": [
+            [
+                "58229e25f906e2d7"
+            ]
+        ]
+    },
+    {
+        "id": "6ba6773af0f39160",
+        "type": "join",
+        "z": "544f381916f55d45",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 830,
+        "y": 680,
+        "wires": [
+            [
+                "991e3571f5d80fdc",
+                "5b01264293e41268"
+            ]
+        ]
+    },
+    {
+        "id": "991e3571f5d80fdc",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 11",
+        "func": "// Extract humidity and time data\nvar forecastData = msg.payload[0];\nvar actualData = msg.payload[1];\nvar chartData1 = forecastData.map(entry => {\n    return { x: new Date(entry.time), y: entry.humidity };\n});\n\nvar chartData2 = actualData.map(entry => {\n    return { x: new Date(entry.time), y: entry.humidity };\n});\n\n\n// Set the chart data\nmsg.payload = [{ series: ['Forecast', 'Actual'], data: [chartData1, chartData2] }];\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 680,
+        "wires": [
+            [
+                "acb14a2046d8f2df"
+            ]
+        ]
+    },
+    {
+        "id": "acb14a2046d8f2df",
+        "type": "ui_chart",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "969f371b7adbcbee",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "label": "Humidity",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#234157",
+            "#658ec3",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1240,
+        "y": 680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1ba8bc6f70312b28",
+        "type": "join",
+        "z": "544f381916f55d45",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 830,
+        "y": 600,
+        "wires": [
+            [
+                "4a581bc7267e82ef",
+                "ab79872177f1a534",
+                "9123a43ef94fef65"
+            ]
+        ]
+    },
+    {
+        "id": "4a581bc7267e82ef",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 12",
+        "func": "// Extract humidity and time data\nvar forecastData = msg.payload[1];\nvar sensorData = msg.payload[0];\nvar chartData1 = forecastData.map(entry => {\n    return { x: new Date(entry.time), y: entry.humidity };\n});\n\nvar chartData2 = sensorData.map(entry => {\n    return { x: new Date(entry.time), y: entry.humidity };\n});\n\n\n// Set the chart data\nmsg.payload = [{ series: ['Forecast', 'Sensor'], data: [chartData1, chartData2] }];\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 560,
+        "wires": [
+            [
+                "b044749e639bf149"
+            ]
+        ]
+    },
+    {
+        "id": "b044749e639bf149",
+        "type": "ui_chart",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "184c3f3ceebe7d21",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "label": "Humidity",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#234157",
+            "#658ec3",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1240,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d4cc0ddf58ad62dd",
+        "type": "ui_chart",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "969f371b7adbcbee",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "Temperature",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#234157",
+            "#658ec3",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1250,
+        "y": 720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5b01264293e41268",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 13",
+        "func": "// Extract humidity and time data\nvar forecastData = msg.payload[0];\nvar actualData = msg.payload[1];\nvar chartData1 = forecastData.map(entry => {\n    return { x: new Date(entry.time), y: entry.temperature };\n});\n\nvar chartData2 = actualData.map(entry => {\n    return { x: new Date(entry.time), y: entry.temperature };\n});\n\n\n// Set the chart data\nmsg.payload = [{ series: ['Forecast', 'Actual'], data: [chartData1, chartData2] }];\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 720,
+        "wires": [
+            [
+                "d4cc0ddf58ad62dd"
+            ]
+        ]
+    },
+    {
+        "id": "0b12388f03c61740",
+        "type": "http request",
+        "z": "544f381916f55d45",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8080/gardenholic-api/v1/sensors_hourly/3",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 580,
+        "wires": [
+            [
+                "1ba8bc6f70312b28"
+            ]
+        ]
+    },
+    {
+        "id": "ab79872177f1a534",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 14",
+        "func": "// Extract humidity and time data\nvar forecastData = msg.payload[1];\nvar sensorData = msg.payload[0];\nvar chartData1 = forecastData.map(entry => {\n    return { x: new Date(entry.time), y: entry.temperature };\n});\n\nvar chartData2 = sensorData.map(entry => {\n    return { x: new Date(entry.time), y: entry.temperature };\n});\n\n\n// Set the chart data\nmsg.payload = [{ series: ['Forecast', 'Sensor'], data: [chartData1, chartData2] }];\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 600,
+        "wires": [
+            [
+                "ad05287f01018633"
+            ]
+        ]
+    },
+    {
+        "id": "ad05287f01018633",
+        "type": "ui_chart",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "184c3f3ceebe7d21",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "Temperature",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#234157",
+            "#658ec3",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1250,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9d6f1b9c1361ef3d",
+        "type": "ui_text_input",
+        "z": "544f381916f55d45",
+        "name": "",
+        "label": "",
+        "tooltip": "",
+        "group": "19a14f32c5397bbb",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 880,
+        "y": 1060,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "58229e25f906e2d7",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 15",
+        "func": "var water = Boolean(msg.payload.water)\n\nif (water) {\n    msg.payload = \"Yes\"\n} else {\n    msg.payload = \"No\"\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 1060,
+        "wires": [
+            [
+                "9d6f1b9c1361ef3d"
+            ]
+        ]
+    },
+    {
+        "id": "58110a98cba848cf",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 16",
+        "func": "var light = msg.payload.light;\nif (light < 807) {\n    msg.payload = \"Low\"\n} else if (light < 1614) {\n    msg.payload = \"Medium\"\n} else {\n    msg.payload = \"High\"\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 220,
+        "wires": [
+            [
+                "4d45da043176c289"
+            ]
+        ]
+    },
+    {
+        "id": "4d45da043176c289",
+        "type": "ui_text_input",
+        "z": "544f381916f55d45",
+        "name": "",
+        "label": "",
+        "tooltip": "",
+        "group": "c7f673c1ba5a7654",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 880,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0a7c03e5a11ed293",
+        "type": "http request",
+        "z": "544f381916f55d45",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8080/gardenholic-api/v1/forecast_data",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 640,
+        "wires": [
+            [
+                "1ba8bc6f70312b28",
+                "6ba6773af0f39160"
+            ]
+        ]
+    },
+    {
+        "id": "34aeb16d7a602547",
+        "type": "http request",
+        "z": "544f381916f55d45",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8080/gardenholic-api/v1/actual_data",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 700,
+        "wires": [
+            [
+                "6ba6773af0f39160"
+            ]
+        ]
+    },
+    {
+        "id": "17fdebedabc86dec",
+        "type": "http request",
+        "z": "544f381916f55d45",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8080/gardenholic-api/v1/latest_sensor",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 370,
+        "y": 140,
+        "wires": [
+            [
+                "9ad43b81c3f460a0",
+                "49638af03ffae947",
+                "d667541d6e3b4c94",
+                "9af3383685c221a5",
+                "58110a98cba848cf"
+            ]
+        ]
+    },
+    {
+        "id": "9ad43b81c3f460a0",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 17",
+        "func": "msg.payload = msg.payload.soil;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 60,
+        "wires": [
+            [
+                "67c55a4d010d9d3c"
+            ]
+        ]
+    },
+    {
+        "id": "49638af03ffae947",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 18",
+        "func": "msg.payload = msg.payload.light;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 100,
+        "wires": [
+            [
+                "c4a9d7439944d033"
+            ]
+        ]
+    },
+    {
+        "id": "d667541d6e3b4c94",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 19",
+        "func": "msg.payload = msg.payload.temperature;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 140,
+        "wires": [
+            [
+                "f1f1d4634c3032d6"
+            ]
+        ]
+    },
+    {
+        "id": "9af3383685c221a5",
+        "type": "function",
+        "z": "544f381916f55d45",
+        "name": "function 20",
+        "func": "msg.payload = msg.payload.humidity;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 180,
+        "wires": [
+            [
+                "d3afff07553a01bb"
+            ]
+        ]
+    },
+    {
+        "id": "c4a9d7439944d033",
+        "type": "ui_gauge",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "b1509d37ab765a3e",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Light",
+        "label": "lux",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "10000",
+        "colors": [
+            "#ca3838",
+            "#e6e600",
+            "#00b500"
+        ],
+        "seg1": "807",
+        "seg2": "1614",
+        "diff": false,
+        "className": "",
+        "x": 870,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "f1f1d4634c3032d6",
+        "type": "ui_gauge",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "b1509d37ab765a3e",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temperature",
+        "label": "degree celcius",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 890,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "d3afff07553a01bb",
+        "type": "ui_gauge",
+        "z": "544f381916f55d45",
+        "name": "",
+        "group": "b1509d37ab765a3e",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Humidity",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#ca3838",
+            "#e6e600",
+            "#00b500"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 880,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "2f9a320e2d86ba46",
+        "type": "delay",
+        "z": "544f381916f55d45",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "3",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 380,
+        "y": 640,
+        "wires": [
+            [
+                "0a7c03e5a11ed293"
+            ]
+        ]
+    },
+    {
+        "id": "9cd174692f5eaba6",
+        "type": "delay",
+        "z": "544f381916f55d45",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 380,
+        "y": 680,
+        "wires": [
+            [
+                "34aeb16d7a602547"
+            ]
+        ]
+    },
+    {
+        "id": "9123a43ef94fef65",
+        "type": "debug",
+        "z": "544f381916f55d45",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "b0abce287edf3f9c",
+        "type": "ui_group",
+        "name": "Sensors data chart",
+        "tab": "0181a759697fb574",
+        "order": 2,
+        "disp": true,
+        "width": 8,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "b1509d37ab765a3e",
+        "type": "ui_group",
+        "name": "Current sensors data",
+        "tab": "0181a759697fb574",
+        "order": 1,
+        "disp": true,
+        "width": 8,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e4e118406f5209a3",
+        "type": "ui_group",
+        "name": "Humidity Accuracy",
+        "tab": "8d4aabc598695828",
+        "order": 3,
+        "disp": true,
+        "width": 10,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "48c4cc186cd53c78",
+        "type": "ui_group",
+        "name": "Temperature Accuracy",
+        "tab": "8d4aabc598695828",
+        "order": 4,
+        "disp": true,
+        "width": 10,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "969f371b7adbcbee",
+        "type": "ui_group",
+        "name": "Forecast API vs Actual API",
+        "tab": "8d4aabc598695828",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "184c3f3ceebe7d21",
+        "type": "ui_group",
+        "name": "Forecast API vs Sensor",
+        "tab": "8d4aabc598695828",
+        "order": 2,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "19a14f32c5397bbb",
+        "type": "ui_group",
+        "name": "Should I water my plant",
+        "tab": "0181a759697fb574",
+        "order": 3,
+        "disp": true,
+        "width": 7,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "c7f673c1ba5a7654",
+        "type": "ui_group",
+        "name": "Level of Light Intensity",
+        "tab": "0181a759697fb574",
+        "order": 4,
+        "disp": true,
+        "width": 7,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "0181a759697fb574",
+        "type": "ui_tab",
+        "name": "Current data",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "8d4aabc598695828",
+        "type": "ui_tab",
+        "name": "TMD Comparison",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]
