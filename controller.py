@@ -75,52 +75,29 @@ def get_remind_water_my_plant():
     result = models.WaterPlant(water)
     return result
 
-def get_avg_kidbright_sensors_data():
+def get_sensor_1hr_data():
     with pool.connection() as conn, conn.cursor() as cs:
-        cs.execute("SELECT MAX(ts) FROM actual;")
-        most_recent_ts = cs.fetchone()[0]
-        cs.execute("""SELECT lat, lon, DATE_FORMAT(ts, '%%Y-%%m-%%d %%H:00:00') AS hour,
-                    AVG(temp) AS temp, AVG(humid) AS humid
-                    FROM gardener 
-                    WHERE ts >= %s
-                    GROUP BY lat, lon, hour ORDER BY hour""",
-                    ((most_recent_ts - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'),))
-        result = [models.Forecast(datetime.strptime(value[2], '%Y-%m-%d %H:00:00'), value[0], value[1], value[3], value[4]) for value in cs.fetchall()]
+        cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data1Hour` WHERE source = 'kidbright'")
+        result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
 def get_forecast_3hrs_data():
     with pool.connection() as conn, conn.cursor() as cs:
-        cs.execute("SELECT MAX(ts) FROM actual;")
-        most_recent_ts = cs.fetchone()[0]
-        start_date = most_recent_ts
-        end_date = start_date - timedelta(days=3)
-
-        cs.execute("""SELECT MIN(ts) AS ts, ROUND(AVG(lat), 4) AS lat,
-                      ROUND(AVG(lon), 4) AS lon, AVG(humid) AS humid, AVG(temp) AS temp
-                      FROM forecast 
-                      WHERE ts BETWEEN %s AND %s
-                      GROUP BY TIMESTAMPDIFF(HOUR, %s, ts) DIV 3 
-                      ORDER BY ts;""", (end_date, start_date, end_date))
-
-
+        cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data3Hours` WHERE source = 'forecast'")
         result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
-def get_actual_data():
+def get_actual_3hrs_data():
+    """Get the actual data of the past 3 days."""
     with pool.connection() as conn, conn.cursor() as cs:
-        cs.execute("SELECT MAX(ts) FROM actual;")
-        most_recent_ts = cs.fetchone()[0]
-        cs.execute("SELECT ts, lat, lon, humid, temp FROM actual "
-                    "WHERE ts >= %s", (most_recent_ts - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'))
+        cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data3Hours` WHERE source = 'actual'")
         result = [models.Actual(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
-def get_forecast_data():
+def get_forecast_1hr_data():
+    """Get the forecast data of the past 3 days and one day ahead from the latest ts in gardener database."""
     with pool.connection() as conn, conn.cursor() as cs:
-        cs.execute("SELECT MAX(ts) FROM actual;")
-        most_recent_ts = cs.fetchone()[0]
-        cs.execute("SELECT ts, lat, lon, humid, temp FROM forecast "
-                    "WHERE ts >= %s", (most_recent_ts - timedelta(days=3)).strftime('%Y-%m-%d %H:00:00'))
+        cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data1Hour` WHERE source = 'forecast'")
         result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
@@ -130,7 +107,7 @@ def calculate_forecast_actual():
     total_count = 0
 
     forecast_data = get_forecast_3hrs_data()
-    actual_data = get_actual_data()
+    actual_data = get_actual_3hrs_data()
 
     for forecast_entry in forecast_data:
         closest_actual_entry = min(actual_data, key=lambda x: abs((forecast_entry.time - x.time).total_seconds()))
@@ -165,8 +142,8 @@ def calculate_mape_sensors():
     total_percentage_error_humid = 0
     total_count = 0
 
-    forecast_data = get_forecast_data()
-    actual_data = get_avg_kidbright_sensors_data()
+    forecast_data = get_forecast_1hr_data()
+    actual_data = get_sensor_1hr_data()
     accumulated_results = []
 
     for forecast_entry in forecast_data:
@@ -199,21 +176,24 @@ def calculate_mape_sensors():
     else:
         return None
     
+
 def get_kidbright_sensors_data_hourly(duration):
     """Show time, lat, lon, soil, humidity, temperature, light data from kidbright source in each hour for the past given day."""
     with pool.connection() as conn, conn.cursor() as cs:
-        cs.execute("""SELECT DATE_FORMAT(ts, '%%Y-%%m-%%d %%H:00:00') AS hour,
+        cs.execute(f"""SELECT DATE_FORMAT(ts, '%Y-%m-%d %H:00:00') AS hour,
                         AVG(lat) AS avg_lat,
                         AVG(lon) AS avg_lon, 
                         AVG(soil) AS avg_soil, 
                         AVG(humid) AS avg_humid, 
                         AVG(temp) AS avg_temp, 
                         AVG(light) AS avg_light
-                        FROM gardener 
-                        WHERE ts >= %s
-                        GROUP BY lat, lon, hour 
-                        ORDER BY hour""",
-                      ((datetime.now() - timedelta(days=duration)).strftime('%Y-%m-%d %H:00:00'),))
+                    FROM gardener
+                    WHERE ts >= DATE_FORMAT((SELECT MAX(ts) - Interval {duration} Day as past_3_days_ts
+                         from gardener
+                         Order by ts DESC
+                         LIMIT 1), '%Y-%m-%d %H:00:00')  
+                    GROUP BY lat, lon, hour""")
+        
         result = [models.Sensor(value[0], round(value[1], 2), round(value[2], 2), round(value[3], 2), round(value[4], 2), round(value[5], 2), round(value[6], 2)) for value in cs.fetchall()]
         return result
 

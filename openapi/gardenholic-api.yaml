@@ -65,7 +65,7 @@ paths:
   /forecast_data:
     get:
       summary: Return forecast data collected from TMD for the past 3 days
-      operationId: controller.get_forecast_data
+      operationId: controller.get_forecast_1hr_data
       responses:
         200:
           description: Success
@@ -78,7 +78,7 @@ paths:
   /actual_data:
     get:
       summary: Return actual data collected from TMD for the past 3 days
-      operationId: controller.get_actual_data
+      operationId: controller.get_actual_3hrs_data
       responses:
         200:
           description: Success
