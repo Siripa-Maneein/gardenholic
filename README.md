@@ -86,7 +86,7 @@ node-red
     ```
     To view API documentation, please visit: http://localhost:8080/gardenholic-api/v1/ui/.
 8. Add new terminal
-9. For Mac, install node red on your terminal (if not yet installed) 
+9. For Mac, install node-red on your terminal (if not yet installed) 
     ```
     sudo npm install -g --unsafe-perm node-red
     ```
@@ -113,7 +113,10 @@ node-red
 13. Select menu in the top right corner and click Manage pallete. 
 14. Install node-red-dashboard
 15. Select menu in the top right corner and click import. 
-16. Copy everything in [node_red/node_red_ui.json](node_red/node_red_ui.json)
+16. Copy everything in [node_red_ui.json](node_red/node_red_ui.json)
 17. Then, paste everything from no.16 and click import
 18. Deploy all nodes
 19. Visit http://127.0.0.1:1880/ui/ to view the ui of our application
+
+### Note
+For the data collection and integration, we use this Node-RED flow: [data_collection_and_integration.json](node_red/data_collection_and_integration.json)
