@@ -10,6 +10,7 @@ GardenHolic
 
 Keeping plants healthy can be a challenge, which is why we're developing a tool to determine when to water them with the use of sensors and weather prediction. 
 
+We gather our weather prediction data from Thai Meteorological Department. We 
 
 ## Required libraries and tools 
 ```
@@ -61,9 +62,23 @@ For other operating system, please visit https://nodered.org/docs/getting-starte
 ```
 node-red
 ```
-11. Copy everything in node-red.json
-12. Visit http://127.0.0.1:1880/
-13. Select menu in the top right corner and click import. 
-14. Then, paste everything in No.11 and click import
-15. Deploy all nodes
-11. Visit http://127.0.0.1:1880/ui/ to view the ui of our application
+11. Install node-red-dashboard
+Try:
+"""
+npm install node-red-dashboard
+"""
+If it is not working, for Mac, run the following command:
+"""
+sudo chown -R $(whoami) ~/.npm
+"""
+"""
+sudo npm install node-red-dashboard
+"""
+12. Visit http://127.0.0.1:1880/ 
+13. Select menu in the top right corner and click Manage pallete. 
+14. Install node-red-dashboard
+15. Select menu in the top right corner and click import. 
+16. Copy everything in node-red.json
+17. Then, paste everything from no.16 and click import
+18. Deploy all nodes
+19. Visit http://127.0.0.1:1880/ui/ to view the ui of our application
