@@ -1,0 +1,223 @@
+openapi: 3.0.0
+info:
+  title: GardenHolic API
+  description: "This API provides sensor data from the KidBright board at a place\
+    \ near one of our members's house. \nAlso, it provides and analyzes weather data\
+    \ information from \nThai Meteorological Department (TMD) API.\n"
+  version: 1.0.0
+servers:
+- url: /gardenholic-api/v1
+paths:
+  /latest_sensor:
+    get:
+      summary: Returns the latest sensor data from kidbright.
+      operationId: controller_get_latest_kidbright_sensors_data
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /sensors_hourly/{duration}:
+    get:
+      summary: "Returns a list of sensor data in each hour of the past {duration}\
+        \ day."
+      operationId: controller_get_kidbright_sensors_data_hourly
+      parameters:
+      - name: duration
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          default: 1
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /sensors_hourly_by_date/{date}:
+    get:
+      summary: Returns a list of sensor data in each hour in the specified date.
+      operationId: controller_get_kidbright_sensors_data_hourly_by_date
+      parameters:
+      - name: date
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /forecast_data:
+    get:
+      summary: Return forecast data collected from TMD for the past 3 days
+      operationId: controller_get_forecast_1hr_data
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HumidTempData'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /actual_data:
+    get:
+      summary: Return actual data collected from TMD for the past 3 days
+      operationId: controller_get_actual_3hrs_data
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HumidTempData'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /tmd_accuracy/sensors:
+    get:
+      summary: Compare forecast data from https://data.tmd.go.th/nwpapi/v1/forecast/location/hourly/
+        and sensors data for the past 3 days and calculate accuracy.
+      operationId: controller_calculate_mape_sensors
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accuracy'
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /tmd_accuracy:
+    get:
+      summary: Compare forecast data and actual data from  https://data.tmd.go.th/api/Weather3Hours/
+        for the past 3 days and calculate accuracy.
+      operationId: controller_calculate_forecast_actual
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accuracy'
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /should_I_water_my_plant:
+    get:
+      summary: Returns boolean indicating whether user should water their plant or
+        not
+      operationId: controller_get_remind_water_my_plant
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WaterPlant'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+components:
+  schemas:
+    Sensor:
+      type: object
+      properties:
+        time:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+        soil:
+          type: number
+        humidity:
+          type: number
+        temperature:
+          type: number
+        light:
+          type: number
+      example:
+        light: 2.3021358869347654518833223846741020679473876953125
+        temperature: 5.63737665663332876420099637471139430999755859375
+        humidity: 5.962133916683182377482808078639209270477294921875
+        lon: 6.02745618307040320615897144307382404804229736328125
+        soil: 1.46581298050294517310021547018550336360931396484375
+        time: time
+        lat: 0.80082819046101150206595775671303272247314453125
+    Accuracy:
+      type: object
+      properties:
+        humidity_accuracy_percentage:
+          type: integer
+        temperature_accuracy_percentage:
+          type: integer
+      example:
+        humidity_accuracy_percentage: 0
+        temperature_accuracy_percentage: 6
+    HumidTempData:
+      type: object
+      properties:
+        time:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+        humidity:
+          type: number
+        temperature:
+          type: number
+      example:
+        temperature: 5.962133916683182377482808078639209270477294921875
+        humidity: 1.46581298050294517310021547018550336360931396484375
+        lon: 6.02745618307040320615897144307382404804229736328125
+        time: time
+        lat: 0.80082819046101150206595775671303272247314453125
+    CurrentSoil:
+      type: object
+      properties:
+        time:
+          type: string
+        soil:
+          type: number
+    ForcastHumid:
+      type: object
+      properties:
+        time:
+          type: string
+        humid:
+          type: number
+    WaterPlant:
+      type: object
+      properties:
+        water:
+          type: string
+      example:
+        water: water
+

@@ -16,15 +16,8 @@ pool = PooledDB(creator=pymysql,
                 maxconnections=1,
                 blocking=True)
 
-def get_kidbright_sensors_data():
-    with pool.connection() as conn, conn.cursor() as cs:
-        cs.execute("""
-                    SELECT ts, lat, lon, soil, humid, temp, light 
-                    FROM gardener""")
-        result = [models.Sensor(value[0], round(value[1], 2), round(value[2], 2), round(value[3], 2), round(value[4], 2), round(value[5], 2), round(value[6], 2)) for value in cs.fetchall()]
-    return result
-
 def get_latest_kidbright_sensors_data():
+    """Get the latest kidbright sensor data from our data base."""
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
                     SELECT ts, lat, lon, soil, humid, temp, light 
@@ -37,6 +30,7 @@ def get_latest_kidbright_sensors_data():
 
 
 def get_latest_soil_humid():
+    """Get the latest soil humidity."""
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
                     SELECT ts, soil
@@ -48,6 +42,7 @@ def get_latest_soil_humid():
     return result
 
 def get_forecast_humid():
+    """Get forecast humidity in the next 24 hours."""
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
                     SELECT ts, humid
@@ -59,6 +54,7 @@ def get_forecast_humid():
     return result
 
 def get_remind_water_my_plant():
+    """Return boolean value to tell if users should water their plants."""
     soil = get_latest_soil_humid()
     humid = get_forecast_humid()
     water = False  
@@ -75,32 +71,35 @@ def get_remind_water_my_plant():
     return result
 
 def get_sensor_1hr_data():
+    """Get the sensor data of the past 3 days in 1-hour interval."""
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data1Hour` WHERE source = 'kidbright'")
         result = [models.HumidTempData(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
+def get_forecast_1hr_data():
+    """Get the forecast data of the past 3 days in 1-hour interval.."""
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data1Hour` WHERE source = 'forecast'")
+        result = [models.HumidTempData(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
+    return result
+
 def get_forecast_3hrs_data():
+    """Get the forecast data of the past 3 days in 3-hour interval."""
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data3Hours` WHERE source = 'forecast'")
         result = [models.HumidTempData(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
 def get_actual_3hrs_data():
-    """Get the actual data of the past 3 days."""
+    """Get the actual data of the past 3 days in 3-hour interval."""
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data3Hours` WHERE source = 'actual'")
         result = [models.HumidTempData(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
-def get_forecast_1hr_data():
-    """Get the forecast data of the past 3 days and one day ahead from the latest ts in gardener database."""
-    with pool.connection() as conn, conn.cursor() as cs:
-        cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data1Hour` WHERE source = 'forecast'")
-        result = [models.HumidTempData(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
-    return result
-
 def calculate_forecast_actual():
+    """Return accuracy of data from Forecast API and Actual API."""
     total_percentage_error_temp = 0
     total_percentage_error_humid = 0
     total_count = 0
@@ -137,6 +136,7 @@ def calculate_forecast_actual():
 
     
 def calculate_mape_sensors():
+    """Return accuracy of data from Forecast API and kidbright sensors."""
     total_percentage_error_temp = 0
     total_percentage_error_humid = 0
     total_count = 0
