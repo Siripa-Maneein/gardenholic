@@ -21,6 +21,13 @@ connexion[swagger-ui]
 python_dateutil
 setuptools
 swagger-ui-bundle
+flask_testing
+coverage
+nose
+pluggy
+py
+randomize
+tox
 node-red
 ```
 
@@ -45,10 +52,11 @@ pip install -r requirements.txt
 python app.py
 ```
 8. Add new terminal
-9. Install node red on your terminal (if not yet installed)
+9. For Mac, install node red on your terminal (if not yet installed) 
 ```
 sudo npm install -g --unsafe-perm node-red
 ```
+For other operating system, please visit https://nodered.org/docs/getting-started/local
 10. Run node-red server
 ```
 node-red
