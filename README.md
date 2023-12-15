@@ -84,6 +84,7 @@ node-red
     ```
     python app.py
     ```
+    To view API documentation, please visit: http://localhost:8080/gardenholic-api/v1/ui/.
 8. Add new terminal
 9. For Mac, install node red on your terminal (if not yet installed) 
     ```

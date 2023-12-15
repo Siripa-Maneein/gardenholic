@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: GardenHolic API
   description: |
-    This API provides sensor data from the KidBright board at Ploy's house. 
+    This API provides sensor data from the KidBright board at a place near one of our members's house. 
     Also, it provides and analyzes weather data information from 
     Thai Meteorological Department (TMD) API.
   version: 1.0.0
