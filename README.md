@@ -36,44 +36,46 @@ node-red
 1. Open gardenholic folder in vscode
 2. Start new terminal
 3. Creare virtual environment
-```
-python3 -m venv env
-```
+    ```
+    python3 -m venv env
+    ```
 4. Activate the virtual environment
-```
-. env/bin/activate
-```
+    ```
+    . env/bin/activate
+    ```
 5. Install dependencies
-```
-pip install -r requirements.txt
-```
-6. Create config.py according to config.py.example
+    ```
+    pip install -r requirements.txt
+    ```
+6. Create *config.py* according to *config.py.example*
 7. Run the server
-```
-python app.py
-```
+    ```
+    python app.py
+    ```
 8. Add new terminal
 9. For Mac, install node red on your terminal (if not yet installed) 
-```
-sudo npm install -g --unsafe-perm node-red
-```
-For other operating system, please visit https://nodered.org/docs/getting-started/local
+    ```
+    sudo npm install -g --unsafe-perm node-red
+    ```
+    For other operating system, please visit https://nodered.org/docs/getting-started/local
+
 10. Run node-red server
-```
-node-red
-```
+    ```
+    node-red
+    ```
 11. Install node-red-dashboard
-Try:
-"""
-npm install node-red-dashboard
-"""
-If it is not working, for Mac, run the following command:
-"""
-sudo chown -R $(whoami) ~/.npm
-"""
-"""
-sudo npm install node-red-dashboard
-"""
+
+    Try:
+    ```
+    npm install node-red-dashboard
+    ```
+    If it is not working, for Mac, run the following command:
+    ```
+    sudo chown -R $(whoami) ~/.npm
+    ```
+    ```
+    sudo npm install node-red-dashboard
+    ```
 12. Visit http://127.0.0.1:1880/ 
 13. Select menu in the top right corner and click Manage pallete. 
 14. Install node-red-dashboard
