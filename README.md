@@ -61,4 +61,9 @@ For other operating system, please visit https://nodered.org/docs/getting-starte
 ```
 node-red
 ```
+11. Copy everything in node-red.json
+12. Visit http://127.0.0.1:1880/
+13. Select menu in the top right corner and click import. 
+14. Then, paste everything in No.11 and click import
+15. Deploy all nodes
 11. Visit http://127.0.0.1:1880/ui/ to view the ui of our application
