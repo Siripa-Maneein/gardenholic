@@ -113,7 +113,7 @@ node-red
 13. Select menu in the top right corner and click Manage pallete. 
 14. Install node-red-dashboard
 15. Select menu in the top right corner and click import. 
-16. Copy everything in node-red.json
+16. Copy everything in [node_red/node_red_ui.json](node_red/node_red_ui.json)
 17. Then, paste everything from no.16 and click import
 18. Deploy all nodes
 19. Visit http://127.0.0.1:1880/ui/ to view the ui of our application

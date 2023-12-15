@@ -1,0 +1,521 @@
+[
+    {
+        "id": "0333f99380e25ff1",
+        "type": "tab",
+        "label": "forecast",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "6e35b1bbefb4c5c5",
+        "type": "inject",
+        "z": "0333f99380e25ff1",
+        "d": true,
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "86400",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "5df5ce87c532180b"
+            ]
+        ]
+    },
+    {
+        "id": "5df5ce87c532180b",
+        "type": "http request",
+        "z": "0333f99380e25ff1",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://data.tmd.go.th/nwpapi/v1/forecast/location/hourly/at?lat=13.91917&lon=100.60500&date=2023-11-29&hour=11&duration=45&format=json",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "bearer",
+        "senderr": false,
+        "headers": [],
+        "x": 350,
+        "y": 100,
+        "wires": [
+            [
+                "a31946d0d468c5bf"
+            ]
+        ]
+    },
+    {
+        "id": "a31946d0d468c5bf",
+        "type": "file",
+        "z": "0333f99380e25ff1",
+        "name": "",
+        "filename": "tmd3.txt",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 540,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5711a8c73ee53392",
+        "type": "inject",
+        "z": "0333f99380e25ff1",
+        "d": true,
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "86460",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 180,
+        "wires": [
+            [
+                "18aa643e3a5500ee"
+            ]
+        ]
+    },
+    {
+        "id": "18aa643e3a5500ee",
+        "type": "file in",
+        "z": "0333f99380e25ff1",
+        "name": "",
+        "filename": "tmd3.txt",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 280,
+        "y": 180,
+        "wires": [
+            [
+                "d01a68563fbc6449"
+            ]
+        ]
+    },
+    {
+        "id": "7baa88ef90ce7416",
+        "type": "debug",
+        "z": "0333f99380e25ff1",
+        "name": "debug 23",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1280,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "51a58a3648c536bc",
+        "type": "template",
+        "z": "0333f99380e25ff1",
+        "name": "",
+        "field": "topic",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "INSERT INTO forecast (ts, lat, lon, humid, temp)\nVALUES (\n    '{{payload.Time}}',\n    {{payload.Latitude}},\n    {{payload.Longitude}},\n    {{payload.Humidity}},\n    {{payload.Temperature}}\n); ",
+        "output": "str",
+        "x": 760,
+        "y": 180,
+        "wires": [
+            [
+                "2689d6ed12777e64"
+            ]
+        ]
+    },
+    {
+        "id": "63bdf2c45ce6c1b5",
+        "type": "mysql",
+        "z": "0333f99380e25ff1",
+        "d": true,
+        "mydb": "cab7d5858d571b33",
+        "name": "",
+        "x": 1140,
+        "y": 180,
+        "wires": [
+            [
+                "7baa88ef90ce7416"
+            ]
+        ]
+    },
+    {
+        "id": "d01a68563fbc6449",
+        "type": "function",
+        "z": "0333f99380e25ff1",
+        "name": "extract",
+        "func": "var json = JSON.parse(msg.payload);\n\nvar desiredDataList = [];\n\nif (\n    json.WeatherForecasts &&\n    json.WeatherForecasts[0] &&\n    json.WeatherForecasts[0].forecasts\n) {\n    json.WeatherForecasts[0].forecasts.forEach(function (forecast) {\n        if (forecast.data) {\n            var desiredData = {\n                Temperature: forecast.data.tc,\n                Humidity: forecast.data.rh,\n                Latitude: json.WeatherForecasts[0].location.lat,\n                Longitude: json.WeatherForecasts[0].location.lon\n            };\n\n            // Format ISO 8601 datetime string as \"YYYY-MM-DD HH:mm:ss\"\n            var isoDatetime = new Date(forecast.time).toISOString();\n            // Adjust the format to \"YYYY-MM-DD HH:mm:ss\"\n            desiredData.Time = isoDatetime.slice(0, 19).replace('T', ' ');\n\n            desiredDataList.push(desiredData);\n        }\n    });\n}\n\nmsg.payload = desiredDataList;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 180,
+        "wires": [
+            [
+                "5b241bbbb0e52ee3",
+                "5d78807f5c8f284e"
+            ]
+        ]
+    },
+    {
+        "id": "5d78807f5c8f284e",
+        "type": "split",
+        "z": "0333f99380e25ff1",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 610,
+        "y": 180,
+        "wires": [
+            [
+                "51a58a3648c536bc"
+            ]
+        ]
+    },
+    {
+        "id": "5b241bbbb0e52ee3",
+        "type": "debug",
+        "z": "0333f99380e25ff1",
+        "name": "debug 31",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "2689d6ed12777e64",
+        "type": "delay",
+        "z": "0333f99380e25ff1",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 950,
+        "y": 180,
+        "wires": [
+            [
+                "63bdf2c45ce6c1b5"
+            ]
+        ]
+    },
+    {
+        "id": "1cdf972b2085cf7f",
+        "type": "mysql",
+        "z": "0333f99380e25ff1",
+        "mydb": "3bf1ca9b7dabf6fb",
+        "name": "group9",
+        "x": 540,
+        "y": 440,
+        "wires": [
+            [
+                "27f9e1612ff28c28"
+            ]
+        ]
+    },
+    {
+        "id": "c70b9d98357e709a",
+        "type": "inject",
+        "z": "0333f99380e25ff1",
+        "d": true,
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "3600",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "12bd0bee3d428191"
+            ]
+        ]
+    },
+    {
+        "id": "12bd0bee3d428191",
+        "type": "template",
+        "z": "0333f99380e25ff1",
+        "name": "data1Hour",
+        "field": "topic",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "DELETE FROM data1Hour;\nINSERT INTO data1Hour (ts, lat, lon, avg_humid, avg_temp, source)\nSELECT DATE_FORMAT(ts, '%Y-%m-%d %H:00:00') AS hour,\n    AVG(lat) AS avg_lat,\n    AVG(lon) AS avg_lon, \n    AVG(humid) AS avg_humid, \n    AVG(temp) AS avg_temp,\n    'kidbright' as source\nFROM gardener\nWHERE ts >= (SELECT MAX(ts) - Interval 3 Day as past_ts\n            from gardener\n            Order by ts DESC\n            LIMIT 1) \nGROUP BY lat, lon, hour\n\nUNION ALL\n\nSELECT\n    DATE_FORMAT(ts, '%Y-%m-%d %H:00:00') AS hour,\n    AVG(lat) AS lat,\n    AVG(lon) AS lon,\n    AVG(humid) as avg_humid,\n    AVG(temp) as avg_temp,\n    'forecast' as source\nFROM forecast\nWHERE ts >= DATE_FORMAT((SELECT MAX(ts) - Interval 3 Day as past_3_days_ts\n                                from gardener\n                                Order by ts DESC\n                                LIMIT 1), '%Y-%m-%d %H:00:00') \nGROUP BY hour\nORDER BY hour, source\n",
+        "output": "str",
+        "x": 330,
+        "y": 440,
+        "wires": [
+            [
+                "1cdf972b2085cf7f"
+            ]
+        ]
+    },
+    {
+        "id": "dd5d5c378e93cbbb",
+        "type": "mysql",
+        "z": "0333f99380e25ff1",
+        "mydb": "3bf1ca9b7dabf6fb",
+        "name": "group9",
+        "x": 540,
+        "y": 540,
+        "wires": [
+            [
+                "27f9e1612ff28c28"
+            ]
+        ]
+    },
+    {
+        "id": "659638f6c7f81515",
+        "type": "inject",
+        "z": "0333f99380e25ff1",
+        "d": true,
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "3600",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 540,
+        "wires": [
+            [
+                "2a70e667c9adea38"
+            ]
+        ]
+    },
+    {
+        "id": "2a70e667c9adea38",
+        "type": "template",
+        "z": "0333f99380e25ff1",
+        "name": "data3Hours",
+        "field": "topic",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "DELETE FROM data3Hours;\nINSERT INTO data3Hours (ts, lat, lon, avg_temp, avg_humid, source)\nSELECT\n    DATE_FORMAT(\n            ts - INTERVAL ((IF(HOUR(ts) = 0, 24, HOUR(ts)) -1) % 3) HOUR,\n            '%Y-%m-%d %H:00:00'\n        ) AS hour,\n    AVG(lat) AS lat,\n    AVG(lon) AS lon,\n    AVG(temp) as avg_temp,\n    AVG(humid) as avg_humid,\n    'forecast' as source\nFROM forecast\nWHERE ts >= (SELECT MAX(ts) - Interval 3 Day as past_3_days_ts\n                                from gardener\n                                Order by ts DESC\n                                LIMIT 1) \nGROUP BY hour\nUNION ALL\nSELECT\n    DATE_FORMAT(\n            ts - INTERVAL ((IF(HOUR(ts) = 0, 24, HOUR(ts)) -1) % 3) HOUR,\n            '%Y-%m-%d %H:00:00'\n        ) AS hour,\n    AVG(lat) AS lat,\n    AVG(lon) AS lon,\n    AVG(temp) as avg_temp,\n    AVG(humid) as avg_humid,\n    'actual' as source\nFROM actual\nWHERE ts >= (SELECT MAX(ts) - Interval 3 Day as past_3_days_ts\n                                from gardener\n                                Order by ts DESC\n                                LIMIT 1)  and\n      ts <= (SELECT MAX(ts)\n                from gardener\n                Order by ts DESC\n                LIMIT 1)\nGROUP BY hour\nORDER BY hour, source",
+        "output": "str",
+        "x": 330,
+        "y": 540,
+        "wires": [
+            [
+                "dd5d5c378e93cbbb"
+            ]
+        ]
+    },
+    {
+        "id": "27f9e1612ff28c28",
+        "type": "debug",
+        "z": "0333f99380e25ff1",
+        "name": "debug 32",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "cfeea857e851f458",
+        "type": "mqtt in",
+        "z": "0333f99380e25ff1",
+        "name": "",
+        "topic": "daq2023/group9/",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "e911451844851988",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 120,
+        "y": 320,
+        "wires": [
+            [
+                "6c99e4eeb5c540f2",
+                "0322bae02a6196f5"
+            ]
+        ]
+    },
+    {
+        "id": "0322bae02a6196f5",
+        "type": "template",
+        "z": "0333f99380e25ff1",
+        "name": "insert",
+        "field": "topic",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "INSERT INTO `gardener`(`lat`, `lon`, `soil`, `humid`, `temp`, `light`) \nVALUES (\n    {{payload.lat}},\n    {{payload.lon}},\n    {{payload.soil}},\n    {{payload.humid}},\n    {{payload.temp}},\n    {{payload.light}}\n)\n",
+        "output": "str",
+        "x": 290,
+        "y": 320,
+        "wires": [
+            [
+                "115a44fff9ad2e3b"
+            ]
+        ]
+    },
+    {
+        "id": "6c99e4eeb5c540f2",
+        "type": "debug",
+        "z": "0333f99380e25ff1",
+        "name": "debug 33",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "115a44fff9ad2e3b",
+        "type": "mysql",
+        "z": "0333f99380e25ff1",
+        "mydb": "d353a393f051e80e",
+        "name": "",
+        "x": 500,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cab7d5858d571b33",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "iot.cpe.ku.ac.th",
+        "port": "3306",
+        "db": "group9",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "3bf1ca9b7dabf6fb",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "iot.cpe.ku.ac.th",
+        "port": "3306",
+        "db": "group9",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "e911451844851988",
+        "type": "mqtt-broker",
+        "name": "iot",
+        "broker": "iot.cpe.ku.ac.th",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "d353a393f051e80e",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "iot.cpe.ku.ac.th",
+        "port": "3306",
+        "db": "group9",
+        "tz": "",
+        "charset": "UTF8"
+    }
+]
