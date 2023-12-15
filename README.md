@@ -10,6 +10,7 @@ GardenHolic
 
 Keeping plants healthy can be a challenge, which is why we're developing a tool to determine when to water them with the use of sensors and weather prediction. 
 
+
 ## Required libraries and tools 
 ```
 Python 3.10.6

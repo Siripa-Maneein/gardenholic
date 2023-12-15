@@ -3,7 +3,6 @@ from flask import abort
 import pymysql
 from dbutils.pooled_db import PooledDB
 from config import OPENAPI_STUB_DIR, DB_HOST, DB_USER, DB_PASSWD, DB_NAME
-from datetime import datetime, timedelta
 
 
 sys.path.append(OPENAPI_STUB_DIR)
@@ -78,27 +77,27 @@ def get_remind_water_my_plant():
 def get_sensor_1hr_data():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data1Hour` WHERE source = 'kidbright'")
-        result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
+        result = [models.HumidTempData(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
 def get_forecast_3hrs_data():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data3Hours` WHERE source = 'forecast'")
-        result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
+        result = [models.HumidTempData(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
 def get_actual_3hrs_data():
     """Get the actual data of the past 3 days."""
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data3Hours` WHERE source = 'actual'")
-        result = [models.Actual(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
+        result = [models.HumidTempData(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
 def get_forecast_1hr_data():
     """Get the forecast data of the past 3 days and one day ahead from the latest ts in gardener database."""
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("SELECT ts, lat, lon, avg_humid, avg_temp FROM `data1Hour` WHERE source = 'forecast'")
-        result = [models.Forecast(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
+        result = [models.HumidTempData(value[0], value[1], value[2], value[3], value[4]) for value in cs.fetchall()]
     return result
 
 def calculate_forecast_actual():

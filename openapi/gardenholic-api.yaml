@@ -74,7 +74,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Forecast'
+                  $ref: '#/components/schemas/HumidTempData'
   /actual_data:
     get:
       summary: Return actual data collected from TMD for the past 3 days
@@ -87,7 +87,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Actual'
+                  $ref: '#/components/schemas/HumidTempData'
   /tmd_accuracy/sensors:
     get:
       summary: Compare forecast data from https://data.tmd.go.th/nwpapi/v1/forecast/location/hourly/ and sensors data for the past 3 days and calculate accuracy.
@@ -152,20 +152,7 @@ components:
             type: integer
           temperature_accuracy_percentage:
             type: integer
-    Actual:
-      type: object
-      properties:
-        time:
-          type: string
-        lat:
-          type: number
-        lon:
-          type: number
-        humidity:
-          type: number
-        temperature:
-          type: number
-    Forecast:
+    HumidTempData:
       type: object
       properties:
         time:

@@ -11,7 +11,7 @@
         "id": "d603077ea606dcdf",
         "type": "http request",
         "z": "544f381916f55d45",
-        "name": "",
+        "name": "sensors_hourly/1",
         "method": "GET",
         "ret": "obj",
         "paytoqs": "ignore",
@@ -23,7 +23,7 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 390,
+        "x": 410,
         "y": 380,
         "wires": [
             [
@@ -46,7 +46,7 @@
         "label": "Soil Moisture",
         "chartType": "line",
         "legend": "false",
-        "xformat": "dd HH:mm",
+        "xformat": "auto",
         "interpolate": "linear",
         "nodata": "",
         "dot": false,
@@ -82,7 +82,7 @@
         "id": "bccdbac893b6d98d",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 1",
+        "name": "soil chart",
         "func": "// Extract soil and time data\nvar data = msg.payload;\nvar chartData = data.map(entry => {\n    return { x: new Date(entry.time), y: entry.soil };\n});\n\n// Set the chart data\nmsg.payload = [{ series: ['Soil'], data: [chartData] }];\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
@@ -102,7 +102,7 @@
         "id": "924c393908920102",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 2",
+        "name": "light chart",
         "func": "// Extract light and time data\nvar data = msg.payload;\nvar chartData = data.map(entry => {\n    return { x: new Date(entry.time), y: entry.light };\n});\n\n// Set the chart data\nmsg.payload = [{ series: ['Light'], data: [chartData] }];\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
@@ -130,7 +130,7 @@
         "label": "Light Intensity",
         "chartType": "line",
         "legend": "false",
-        "xformat": "dd HH:mm",
+        "xformat": "auto",
         "interpolate": "linear",
         "nodata": "",
         "dot": false,
@@ -166,7 +166,7 @@
         "id": "00b457a3f83103f1",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 3",
+        "name": "temperature chart",
         "func": "// Extract temperature and time data\nvar data = msg.payload;\nvar chartData = data.map(entry => {\n    return { x: new Date(entry.time), y: entry.temperature };\n});\n\n// Set the chart data\nmsg.payload = [{ series: ['Temperature'], data: [chartData] }];\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
@@ -174,7 +174,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 660,
+        "x": 690,
         "y": 380,
         "wires": [
             [
@@ -194,7 +194,7 @@
         "label": "Temperature",
         "chartType": "line",
         "legend": "false",
-        "xformat": "dd HH:mm",
+        "xformat": "auto",
         "interpolate": "linear",
         "nodata": "",
         "dot": false,
@@ -220,7 +220,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 830,
+        "x": 930,
         "y": 380,
         "wires": [
             []
@@ -230,7 +230,7 @@
         "id": "fceea4c85b2386ce",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 4",
+        "name": "humidity chart",
         "func": "// Extract humidity and time data\nvar data = msg.payload;\nvar chartData = data.map(entry => {\n    return { x: new Date(entry.time), y: entry.humidity };\n});\n\n// Set the chart data\nmsg.payload = [{ series: ['Humidity'], data: [chartData] }];\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
@@ -238,7 +238,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 660,
+        "x": 680,
         "y": 420,
         "wires": [
             [
@@ -258,7 +258,7 @@
         "label": "Humidity",
         "chartType": "line",
         "legend": "false",
-        "xformat": "dd HH:mm",
+        "xformat": "auto",
         "interpolate": "linear",
         "nodata": "",
         "dot": false,
@@ -284,7 +284,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 820,
+        "x": 920,
         "y": 420,
         "wires": [
             []
@@ -322,7 +322,7 @@
         "id": "d073da9f3d15c179",
         "type": "http request",
         "z": "544f381916f55d45",
-        "name": "",
+        "name": "tmd_accuracy",
         "method": "GET",
         "ret": "obj",
         "paytoqs": "ignore",
@@ -334,7 +334,7 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 390,
+        "x": 400,
         "y": 880,
         "wires": [
             [
@@ -359,9 +359,9 @@
         "min": 0,
         "max": "100",
         "colors": [
-            "#00b500",
+            "#ca3838",
             "#e6e600",
-            "#ca3838"
+            "#00b500"
         ],
         "seg1": "",
         "seg2": "",
@@ -387,9 +387,9 @@
         "min": 0,
         "max": "100",
         "colors": [
-            "#00b500",
+            "#ca3838",
             "#e6e600",
-            "#ca3838"
+            "#00b500"
         ],
         "seg1": "",
         "seg2": "",
@@ -403,7 +403,7 @@
         "id": "238678dac268257c",
         "type": "http request",
         "z": "544f381916f55d45",
-        "name": "",
+        "name": "tmd_accuracy/sensors",
         "method": "GET",
         "ret": "obj",
         "paytoqs": "ignore",
@@ -415,7 +415,7 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 390,
+        "x": 420,
         "y": 960,
         "wires": [
             [
@@ -440,9 +440,9 @@
         "min": 0,
         "max": "100",
         "colors": [
-            "#00b500",
+            "#ca3838",
             "#e6e600",
-            "#ca3838"
+            "#00b500"
         ],
         "seg1": "",
         "seg2": "",
@@ -468,9 +468,9 @@
         "min": 0,
         "max": "100",
         "colors": [
-            "#00b500",
+            "#ca3838",
             "#e6e600",
-            "#ca3838"
+            "#00b500"
         ],
         "seg1": "",
         "seg2": "",
@@ -494,7 +494,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "10",
+        "repeat": "600",
         "crontab": "",
         "once": true,
         "onceDelay": 0.1,
@@ -520,7 +520,7 @@
         "id": "9a9152a1a4f5c2f3",
         "type": "http request",
         "z": "544f381916f55d45",
-        "name": "",
+        "name": "should_I_water_my_plant",
         "method": "GET",
         "ret": "obj",
         "paytoqs": "ignore",
@@ -532,7 +532,7 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 370,
+        "x": 410,
         "y": 1060,
         "wires": [
             [
@@ -544,7 +544,7 @@
         "id": "6ba6773af0f39160",
         "type": "join",
         "z": "544f381916f55d45",
-        "name": "",
+        "name": "actual join forecast",
         "mode": "custom",
         "build": "array",
         "property": "payload",
@@ -560,7 +560,7 @@
         "reduceInit": "",
         "reduceInitType": "",
         "reduceFixup": "",
-        "x": 830,
+        "x": 880,
         "y": 680,
         "wires": [
             [
@@ -573,7 +573,7 @@
         "id": "991e3571f5d80fdc",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 11",
+        "name": "humidity comparison chart",
         "func": "// Extract humidity and time data\nvar forecastData = msg.payload[0];\nvar actualData = msg.payload[1];\nvar chartData1 = forecastData.map(entry => {\n    return { x: new Date(entry.time), y: entry.humidity };\n});\n\nvar chartData2 = actualData.map(entry => {\n    return { x: new Date(entry.time), y: entry.humidity };\n});\n\n\n// Set the chart data\nmsg.payload = [{ series: ['Forecast', 'Actual'], data: [chartData1, chartData2] }];\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
@@ -581,7 +581,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1030,
+        "x": 1200,
         "y": 680,
         "wires": [
             [
@@ -601,7 +601,7 @@
         "label": "Humidity",
         "chartType": "line",
         "legend": "true",
-        "xformat": "dd HH:mm",
+        "xformat": "auto",
         "interpolate": "linear",
         "nodata": "",
         "dot": false,
@@ -627,7 +627,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 1240,
+        "x": 1460,
         "y": 680,
         "wires": [
             []
@@ -637,7 +637,7 @@
         "id": "1ba8bc6f70312b28",
         "type": "join",
         "z": "544f381916f55d45",
-        "name": "",
+        "name": "kidbright join forecast",
         "mode": "custom",
         "build": "array",
         "property": "payload",
@@ -653,7 +653,7 @@
         "reduceInit": "",
         "reduceInitType": "",
         "reduceFixup": "",
-        "x": 830,
+        "x": 850,
         "y": 600,
         "wires": [
             [
@@ -667,7 +667,7 @@
         "id": "4a581bc7267e82ef",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 12",
+        "name": "humidity comparison chart",
         "func": "// Extract humidity and time data\nvar forecastData = msg.payload[1];\nvar sensorData = msg.payload[0];\nvar chartData1 = forecastData.map(entry => {\n    return { x: new Date(entry.time), y: entry.humidity };\n});\n\nvar chartData2 = sensorData.map(entry => {\n    return { x: new Date(entry.time), y: entry.humidity };\n});\n\n\n// Set the chart data\nmsg.payload = [{ series: ['Forecast', 'Sensor'], data: [chartData1, chartData2] }];\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
@@ -675,7 +675,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1030,
+        "x": 1200,
         "y": 560,
         "wires": [
             [
@@ -695,7 +695,7 @@
         "label": "Humidity",
         "chartType": "line",
         "legend": "true",
-        "xformat": "dd HH:mm",
+        "xformat": "auto",
         "interpolate": "linear",
         "nodata": "",
         "dot": false,
@@ -721,7 +721,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 1240,
+        "x": 1480,
         "y": 560,
         "wires": [
             []
@@ -739,7 +739,7 @@
         "label": "Temperature",
         "chartType": "line",
         "legend": "true",
-        "xformat": "dd HH:mm",
+        "xformat": "auto",
         "interpolate": "linear",
         "nodata": "",
         "dot": false,
@@ -765,7 +765,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 1250,
+        "x": 1470,
         "y": 720,
         "wires": [
             []
@@ -775,7 +775,7 @@
         "id": "5b01264293e41268",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 13",
+        "name": "temperature comparison chart",
         "func": "// Extract humidity and time data\nvar forecastData = msg.payload[0];\nvar actualData = msg.payload[1];\nvar chartData1 = forecastData.map(entry => {\n    return { x: new Date(entry.time), y: entry.temperature };\n});\n\nvar chartData2 = actualData.map(entry => {\n    return { x: new Date(entry.time), y: entry.temperature };\n});\n\n\n// Set the chart data\nmsg.payload = [{ series: ['Forecast', 'Actual'], data: [chartData1, chartData2] }];\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
@@ -783,7 +783,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1030,
+        "x": 1190,
         "y": 720,
         "wires": [
             [
@@ -795,7 +795,7 @@
         "id": "0b12388f03c61740",
         "type": "http request",
         "z": "544f381916f55d45",
-        "name": "",
+        "name": "sensors_hourly/3",
         "method": "GET",
         "ret": "obj",
         "paytoqs": "ignore",
@@ -807,7 +807,7 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 570,
+        "x": 590,
         "y": 580,
         "wires": [
             [
@@ -819,7 +819,7 @@
         "id": "ab79872177f1a534",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 14",
+        "name": "temperature comparison chart",
         "func": "// Extract humidity and time data\nvar forecastData = msg.payload[1];\nvar sensorData = msg.payload[0];\nvar chartData1 = forecastData.map(entry => {\n    return { x: new Date(entry.time), y: entry.temperature };\n});\n\nvar chartData2 = sensorData.map(entry => {\n    return { x: new Date(entry.time), y: entry.temperature };\n});\n\n\n// Set the chart data\nmsg.payload = [{ series: ['Forecast', 'Sensor'], data: [chartData1, chartData2] }];\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
@@ -827,7 +827,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1030,
+        "x": 1210,
         "y": 600,
         "wires": [
             [
@@ -847,7 +847,7 @@
         "label": "Temperature",
         "chartType": "line",
         "legend": "true",
-        "xformat": "dd HH:mm",
+        "xformat": "auto",
         "interpolate": "linear",
         "nodata": "",
         "dot": false,
@@ -873,7 +873,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 1250,
+        "x": 1470,
         "y": 600,
         "wires": [
             []
@@ -907,7 +907,7 @@
         "id": "58229e25f906e2d7",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 15",
+        "name": "yes or no",
         "func": "var water = Boolean(msg.payload.water)\n\nif (water) {\n    msg.payload = \"Yes\"\n} else {\n    msg.payload = \"No\"\n}\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -915,7 +915,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 630,
+        "x": 620,
         "y": 1060,
         "wires": [
             [
@@ -927,7 +927,7 @@
         "id": "58110a98cba848cf",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 16",
+        "name": "light level",
         "func": "var light = msg.payload.light;\nif (light < 807) {\n    msg.payload = \"Low\"\n} else if (light < 1614) {\n    msg.payload = \"Medium\"\n} else {\n    msg.payload = \"High\"\n}\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -935,7 +935,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 670,
+        "x": 660,
         "y": 220,
         "wires": [
             [
@@ -947,7 +947,7 @@
         "id": "4d45da043176c289",
         "type": "ui_text_input",
         "z": "544f381916f55d45",
-        "name": "",
+        "name": "light level",
         "label": "",
         "tooltip": "",
         "group": "c7f673c1ba5a7654",
@@ -971,7 +971,7 @@
         "id": "0a7c03e5a11ed293",
         "type": "http request",
         "z": "544f381916f55d45",
-        "name": "",
+        "name": "forecast_data",
         "method": "GET",
         "ret": "obj",
         "paytoqs": "ignore",
@@ -983,7 +983,7 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 570,
+        "x": 580,
         "y": 640,
         "wires": [
             [
@@ -996,7 +996,7 @@
         "id": "34aeb16d7a602547",
         "type": "http request",
         "z": "544f381916f55d45",
-        "name": "",
+        "name": "actual_data",
         "method": "GET",
         "ret": "obj",
         "paytoqs": "ignore",
@@ -1020,7 +1020,7 @@
         "id": "17fdebedabc86dec",
         "type": "http request",
         "z": "544f381916f55d45",
-        "name": "",
+        "name": "latest_sensor",
         "method": "GET",
         "ret": "obj",
         "paytoqs": "ignore",
@@ -1048,7 +1048,7 @@
         "id": "9ad43b81c3f460a0",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 17",
+        "name": "soil gauge",
         "func": "msg.payload = msg.payload.soil;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -1068,7 +1068,7 @@
         "id": "49638af03ffae947",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 18",
+        "name": "light gauge",
         "func": "msg.payload = msg.payload.light;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -1088,7 +1088,7 @@
         "id": "d667541d6e3b4c94",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 19",
+        "name": "temperature gauge",
         "func": "msg.payload = msg.payload.temperature;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -1096,7 +1096,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 670,
+        "x": 690,
         "y": 140,
         "wires": [
             [
@@ -1108,7 +1108,7 @@
         "id": "9af3383685c221a5",
         "type": "function",
         "z": "544f381916f55d45",
-        "name": "function 20",
+        "name": "humidity gauge",
         "func": "msg.payload = msg.payload.humidity;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -1116,7 +1116,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 670,
+        "x": 680,
         "y": 180,
         "wires": [
             [
@@ -1134,7 +1134,7 @@
         "width": 0,
         "height": 0,
         "gtype": "gage",
-        "title": "Light",
+        "title": "Light Intensity",
         "label": "lux",
         "format": "{{value}}",
         "min": 0,
@@ -1148,7 +1148,7 @@
         "seg2": "1614",
         "diff": false,
         "className": "",
-        "x": 870,
+        "x": 900,
         "y": 100,
         "wires": []
     },
@@ -1166,7 +1166,7 @@
         "label": "degree celcius",
         "format": "{{value}}",
         "min": 0,
-        "max": "100",
+        "max": "60",
         "colors": [
             "#00b500",
             "#e6e600",
@@ -1270,7 +1270,7 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 960,
+        "x": 1080,
         "y": 500,
         "wires": []
     },
